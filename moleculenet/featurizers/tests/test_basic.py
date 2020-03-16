@@ -4,7 +4,7 @@ Test basic molecular features.
 import numpy as np
 import unittest
 
-from moleculenet.feat.basic import MolecularWeight, RDKitDescriptors
+from moleculenet.featurizers.basic import MolecularWeight, RDKitDescriptors
 
 
 class TestMolecularWeight(unittest.TestCase):

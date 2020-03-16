@@ -2,7 +2,7 @@
 Basic molecular features.
 """
 
-from moleculenet.feat import Featurizer
+from moleculenet.featurizers import Featurizer
 
 
 class MolecularWeight(Featurizer):

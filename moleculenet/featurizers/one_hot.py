@@ -1,5 +1,5 @@
 import numpy as np
-from moleculenet.feat import Featurizer
+from moleculenet.featurizers import Featurizer
 
 zinc_charset = [
     ' ', '#', ')', '(', '+', '-', '/', '1', '3', '2', '5', '4', '7', '6', '8',

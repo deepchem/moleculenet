@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import moleculenet as molnet
+import moleculenet.featurizers as feat
 from nose.tools import assert_equals
 
 
@@ -11,7 +11,7 @@ class TestOneHotFeaturizer(TestCase):
     from rdkit import Chem
     smiles = ["Cn1c(=O)c2c(ncn2C)n(C)c1=O", "CC(=O)N1CN(C(C)=O)C(O)C1O"]
     mols = [Chem.MolFromSmiles(smile) for smile in smiles]
-    featurizer = molnet.feat.one_hot.OneHotFeaturizer(molnet.feat.one_hot.zinc_charset)
+    featurizer = feat.one_hot.OneHotFeaturizer(feat.one_hot.zinc_charset)
     one_hots = featurizer.featurize(mols)
     untransformed = featurizer.untransform(one_hots)
     assert_equals(len(smiles), len(untransformed))
