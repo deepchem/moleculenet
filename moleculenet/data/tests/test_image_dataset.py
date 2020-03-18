@@ -1,13 +1,9 @@
 """
 Tests for ImageDataset class
 """
-__author__ = "Bharath Ramsundar"
-__copyright__ = "Copyright 2016, Stanford University"
-__license__ = "MIT"
-
 import unittest
 import numpy as np
-import deepchem as dc
+import moleculenet
 import os
 from tensorflow.python.framework import test_util
 
@@ -25,7 +21,7 @@ class TestImageDataset(test_util.TensorFlowTestCase):
 
     # First try using images for X.
 
-    ds1 = dc.data.ImageDataset(files, np.random.random(10))
+    ds1 = moleculenet.data.ImageDataset(files, np.random.random(10))
     x_shape, y_shape, w_shape, ids_shape = ds1.get_shape()
     np.testing.assert_array_equal([10, 28, 28], x_shape)
     np.testing.assert_array_equal([10], y_shape)
@@ -38,7 +34,7 @@ class TestImageDataset(test_util.TensorFlowTestCase):
 
     # Now try using images for y.
 
-    ds2 = dc.data.ImageDataset(np.random.random(10), files)
+    ds2 = moleculenet.data.ImageDataset(np.random.random(10), files)
     x_shape, y_shape, w_shape, ids_shape = ds2.get_shape()
     np.testing.assert_array_equal([10], x_shape)
     np.testing.assert_array_equal([10, 28, 28], y_shape)
@@ -55,7 +51,7 @@ class TestImageDataset(test_util.TensorFlowTestCase):
 
     path = os.path.join(os.path.dirname(__file__), 'images')
     files = [os.path.join(path, f) for f in os.listdir(path)]
-    ds = dc.data.ImageDataset(files, np.random.random(10))
+    ds = moleculenet.data.ImageDataset(files, np.random.random(10))
     X = ds.X
     i = 0
     for x, y, w, id in ds.itersamples():
@@ -71,7 +67,7 @@ class TestImageDataset(test_util.TensorFlowTestCase):
 
     path = os.path.join(os.path.dirname(__file__), 'images')
     files = [os.path.join(path, f) for f in os.listdir(path)]
-    ds = dc.data.ImageDataset(files, np.random.random(10))
+    ds = moleculenet.data.ImageDataset(files, np.random.random(10))
     X = ds.X
     iterated_ids = set()
     for x, y, w, ids in ds.iterbatches(2):
@@ -86,7 +82,3 @@ class TestImageDataset(test_util.TensorFlowTestCase):
         index = files.index(ids[i])
         np.testing.assert_array_equal(x[i], X[index])
     assert len(iterated_ids) == 10
-
-
-if __name__ == "__main__":
-  unittest.main()

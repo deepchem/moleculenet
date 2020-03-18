@@ -12,7 +12,7 @@ import tempfile
 import os
 import shutil
 import numpy as np
-import deepchem as dc
+import moleculenet
 import tensorflow as tf
 from tensorflow.python.framework import test_util
 
@@ -28,22 +28,22 @@ class TestDatasets(test_util.TensorFlowTestCase):
     num_samples = 10
     num_features = num_samples
     X = np.eye(num_samples)
-    X_sparse = dc.data.sparsify_features(X)
-    X_reconstructed = dc.data.densify_features(X_sparse, num_features)
+    X_sparse = moleculenet.data.sparsify_features(X)
+    X_reconstructed = moleculenet.data.densify_features(X_sparse, num_features)
     np.testing.assert_array_equal(X, X_reconstructed)
 
     # Generate random sparse features dataset
     np.random.seed(123)
     p = .05
     X = np.random.binomial(1, p, size=(num_samples, num_features))
-    X_sparse = dc.data.sparsify_features(X)
-    X_reconstructed = dc.data.densify_features(X_sparse, num_features)
+    X_sparse = moleculenet.data.sparsify_features(X)
+    X_reconstructed = moleculenet.data.densify_features(X_sparse, num_features)
     np.testing.assert_array_equal(X, X_reconstructed)
 
     # Test edge case with array of all zeros
     X = np.zeros((num_samples, num_features))
-    X_sparse = dc.data.sparsify_features(X)
-    X_reconstructed = dc.data.densify_features(X_sparse, num_features)
+    X_sparse = moleculenet.data.sparsify_features(X)
+    X_reconstructed = moleculenet.data.densify_features(X_sparse, num_features)
     np.testing.assert_array_equal(X, X_reconstructed)
 
   def test_pad_features(self):
@@ -56,31 +56,31 @@ class TestDatasets(test_util.TensorFlowTestCase):
     n_samples = 29
     X_b = np.zeros((n_samples, num_features))
 
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
     # Test cases where n_samples < batch_size
     n_samples = 79
     X_b = np.zeros((n_samples, num_features))
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
     # Test case where n_samples == batch_size
     n_samples = 100
     X_b = np.zeros((n_samples, num_features))
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
     # Test case for object featurization.
     n_samples = 2
     X_b = np.array([{"a": 1}, {"b": 2}])
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
     # Test case for more complicated object featurization
     n_samples = 2
     X_b = np.array([(1, {"a": 1}), (2, {"b": 2})])
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
     # Test case with multidimensional data
@@ -88,7 +88,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     num_atoms = 15
     d = 3
     X_b = np.zeros((n_samples, num_atoms, d))
-    X_out = dc.data.pad_features(batch_size, X_b)
+    X_out = moleculenet.data.pad_features(batch_size, X_b)
     assert len(X_out) == batch_size
 
   def test_pad_batches(self):
@@ -104,7 +104,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
 
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
@@ -115,7 +115,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
 
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
@@ -126,7 +126,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
 
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
@@ -136,7 +136,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     y_b = np.zeros((n_samples, num_tasks))
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
@@ -146,7 +146,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     y_b = np.zeros((n_samples, num_tasks))
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
@@ -159,16 +159,16 @@ class TestDatasets(test_util.TensorFlowTestCase):
     w_b = np.zeros((n_samples, num_tasks))
     ids_b = np.zeros((n_samples,))
 
-    X_out, y_out, w_out, ids_out = dc.data.pad_batch(batch_size, X_b, y_b, w_b,
+    X_out, y_out, w_out, ids_out = moleculenet.data.pad_batch(batch_size, X_b, y_b, w_b,
                                                      ids_b)
     assert len(X_out) == len(y_out) == len(w_out) == len(ids_out) == batch_size
 
   def test_get_task_names(self):
     """Test that get_task_names returns correct task_names"""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     assert solubility_dataset.get_task_names() == ["log-solubility"]
 
-    multitask_dataset = dc.data.tests.load_multitask_data()
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
     assert sorted(multitask_dataset.get_task_names()) == sorted([
         "task0", "task1", "task2", "task3", "task4", "task5", "task6", "task7",
         "task8", "task9", "task10", "task11", "task12", "task13", "task14",
@@ -177,20 +177,20 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_get_data_shape(self):
     """Test that get_data_shape returns currect data shape"""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     assert solubility_dataset.get_data_shape() == (1024,)
 
-    multitask_dataset = dc.data.tests.load_multitask_data()
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
     assert multitask_dataset.get_data_shape() == (1024,)
 
   def test_len(self):
     """Test that len(dataset) works."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     assert len(solubility_dataset) == 10
 
   def test_reshard(self):
     """Test that resharding the dataset works."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
     assert solubility_dataset.get_number_shards() == 1
@@ -225,7 +225,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     y = np.random.randint(2, size=(num_datapoints, num_tasks))
     w = np.ones((num_datapoints, num_tasks))
     ids = np.array(["id"] * num_datapoints)
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
 
     indices = [0, 4, 5, 8]
     select_dataset = dataset.select(indices)
@@ -256,7 +256,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
         yield X_b, y_b, w_b, ids_b
 
-    dataset = dc.data.DiskDataset.create_dataset(shard_generator())
+    dataset = moleculenet.data.DiskDataset.create_dataset(shard_generator())
 
     res = dataset.complete_shuffle()
 
@@ -285,7 +285,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     w = np.random.randint(2, size=(num_datapoints, num_tasks))
     ids = np.array(["id"] * num_datapoints)
 
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
 
     X_shape, y_shape, w_shape, ids_shape = dataset.get_shape()
     assert X_shape == X.shape
@@ -295,7 +295,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_iterbatches(self):
     """Test that iterating over batches of data works."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     batch_size = 2
     data_shape = solubility_dataset.get_data_shape()
     tasks = solubility_dataset.get_task_names()
@@ -315,7 +315,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     y = np.random.randint(2, size=(num_datapoints, num_tasks))
     w = np.random.randint(2, size=(num_datapoints, num_tasks))
     ids = np.array(["id"] * num_datapoints)
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
     for i, (sx, sy, sw, sid) in enumerate(dataset.itersamples()):
       np.testing.assert_array_equal(sx, X[i])
       np.testing.assert_array_equal(sy, y[i])
@@ -324,7 +324,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_itersamples_disk(self):
     """Test that iterating over samples in a DiskDataset works."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     X = solubility_dataset.X
     y = solubility_dataset.y
     w = solubility_dataset.w
@@ -346,7 +346,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     y = np.random.randint(2, size=(num_datapoints, num_tasks))
     w = np.random.randint(2, size=(num_datapoints, num_tasks))
     ids = np.array(["id"] * num_datapoints)
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
 
     # Transform it
 
@@ -365,7 +365,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_transform_disk(self):
     """Test that the transform() method works for DiskDatasets."""
-    dataset = dc.data.tests.load_solubility_data()
+    dataset = moleculenet.data.tests.load_solubility_data()
     X = dataset.X
     y = dataset.y
     w = dataset.w
@@ -387,7 +387,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_to_numpy(self):
     """Test that transformation to numpy arrays is sensible."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     data_shape = solubility_dataset.get_data_shape()
     tasks = solubility_dataset.get_task_names()
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
@@ -402,7 +402,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_consistent_ordering(self):
     """Test that ordering of labels is consistent over time."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
 
     ids1 = solubility_dataset.ids
     ids2 = solubility_dataset.ids
@@ -411,7 +411,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
   def test_get_statistics(self):
     """Test statistics computation of this dataset."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     X, y, _, _ = (solubility_dataset.X, solubility_dataset.y,
                   solubility_dataset.w, solubility_dataset.ids)
     X_means, y_means = np.mean(X, axis=0), np.mean(y, axis=0)
@@ -424,7 +424,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     np.testing.assert_allclose(comp_y_stds, y_stds)
 
   def test_disk_iterate_batch_size(self):
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     X, y, _, _ = (solubility_dataset.X, solubility_dataset.y,
                   solubility_dataset.w, solubility_dataset.ids)
     batch_sizes = []
@@ -453,7 +453,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
         yield X_b, y_b, w_b, ids_b
 
-    dataset = dc.data.DiskDataset.create_dataset(shard_generator())
+    dataset = moleculenet.data.DiskDataset.create_dataset(shard_generator())
 
     all_Xs = np.concatenate(all_Xs, axis=0)
     all_ys = np.concatenate(all_ys, axis=0)
@@ -507,7 +507,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
         yield X_b, None, None, ids_b
 
-    dataset = dc.data.DiskDataset.create_dataset(shard_generator())
+    dataset = moleculenet.data.DiskDataset.create_dataset(shard_generator())
 
     all_Xs = np.concatenate(all_Xs, axis=0)
     all_ids = np.concatenate(all_ids, axis=0)
@@ -571,7 +571,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
 
           yield X_b, y_b, w_b, ids_b
 
-      dataset = dc.data.DiskDataset.create_dataset(shard_generator())
+      dataset = moleculenet.data.DiskDataset.create_dataset(shard_generator())
 
       all_Xs = np.concatenate(all_Xs, axis=0)
       all_ys = np.concatenate(all_ys, axis=0)
@@ -649,10 +649,10 @@ class TestDatasets(test_util.TensorFlowTestCase):
           np.sort(all_ids, axis=0), np.sort(test_ids, axis=0))
 
   def test_numpy_iterate_batch_size(self):
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     X, y, _, _ = (solubility_dataset.X, solubility_dataset.y,
                   solubility_dataset.w, solubility_dataset.ids)
-    solubility_dataset = dc.data.NumpyDataset.from_DiskDataset(
+    solubility_dataset = moleculenet.data.NumpyDataset.from_DiskDataset(
         solubility_dataset)
     batch_sizes = []
     for X, y, _, _ in solubility_dataset.iterbatches(
@@ -672,10 +672,10 @@ class TestDatasets(test_util.TensorFlowTestCase):
       yi = np.random.randint(2, size=(num_datapoints, num_tasks))
       wi = np.ones((num_datapoints, num_tasks))
       idsi = np.array(["id"] * num_datapoints)
-      dataseti = dc.data.DiskDataset.from_numpy(Xi, yi, wi, idsi)
+      dataseti = moleculenet.data.DiskDataset.from_numpy(Xi, yi, wi, idsi)
       datasets.append(dataseti)
 
-    new_data = dc.data.datasets.DiskDataset.merge(datasets)
+    new_data = moleculenet.data.datasets.DiskDataset.merge(datasets)
 
     # Check that we have all the data in
     assert new_data.X.shape == (num_datapoints * num_datasets, num_features)
@@ -686,7 +686,7 @@ class TestDatasets(test_util.TensorFlowTestCase):
     """Test creating a Tensorflow Iterator from a Dataset."""
     X = np.random.random((100, 5))
     y = np.random.random((100, 1))
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
     iterator = dataset.make_tf_dataset(
         batch_size=10, epochs=2, deterministic=True)
     for i, (batch_X, batch_y, batch_w) in enumerate(iterator):
@@ -695,7 +695,3 @@ class TestDatasets(test_util.TensorFlowTestCase):
       np.testing.assert_array_equal(y[offset:offset + 10, :], batch_y)
       np.testing.assert_array_equal(np.ones((10, 1)), batch_w)
     assert i == 19
-
-
-if __name__ == "__main__":
-  unittest.main()

@@ -6,8 +6,8 @@ import unittest
 import tempfile
 from scipy import misc
 from PIL import Image
-import deepchem as dc
 import zipfile
+import moleculenet
 
 
 class TestImageLoader(unittest.TestCase):
@@ -57,39 +57,39 @@ class TestImageLoader(unittest.TestCase):
     Image.fromarray(self.face).save(face_copy_path)
 
   def test_png_simple_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.face_path)
     # These are the known dimensions of face.png
     assert dataset.X.shape == (1, 768, 1024, 3)
 
   def test_tif_simple_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.tif_image_path)
     # TODO(rbharath): Where are the color channels?
     assert dataset.X.shape == (1, 44, 330)
 
   def test_png_multi_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize([self.face_path, self.face_copy_path])
     assert dataset.X.shape == (2, 768, 1024, 3)
 
   def test_png_zip_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.zip_path)
     assert dataset.X.shape == (1, 768, 1024, 3)
 
   def test_png_multi_zip_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.multi_zip_path)
     assert dataset.X.shape == (2, 768, 1024, 3)
 
   def test_multitype_zip_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.multitype_zip_path)
     # Since the different files have different shapes, makes an object array
     assert dataset.X.shape == (2,)
 
   def test_directory_load(self):
-    loader = dc.data.ImageLoader()
+    loader = moleculenet.data.ImageLoader()
     dataset = loader.featurize(self.image_dir)
     assert dataset.X.shape == (2, 768, 1024, 3)

@@ -9,8 +9,8 @@ import os
 import shutil
 import tempfile
 import unittest
-import deepchem as dc
 import numpy as np
+import moleculenet
 
 
 class TestShuffle(unittest.TestCase):
@@ -55,9 +55,9 @@ class TestShuffle(unittest.TestCase):
 
     dataset_file = os.path.join(current_dir, "../../models/tests/example.csv")
 
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["log-solubility"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, shard_size=2)
 
@@ -89,7 +89,7 @@ class TestShuffle(unittest.TestCase):
     y = np.random.randint(2, size=(n_samples, n_tasks))
     w = np.random.randint(2, size=(n_samples, n_tasks))
     ids = np.arange(n_samples)
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
     dataset.reshard(shard_size=10)
 
     dataset.shuffle_each_shard()
@@ -117,7 +117,7 @@ class TestShuffle(unittest.TestCase):
     y = np.random.randint(2, size=(n_samples, n_tasks))
     w = np.random.randint(2, size=(n_samples, n_tasks))
     ids = np.arange(n_samples)
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
     dataset.reshard(shard_size=10)
     dataset.shuffle_shards()
 

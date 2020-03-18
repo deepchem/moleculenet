@@ -1,16 +1,12 @@
 """
 Testing reload.
 """
-__author__ = "Bharath Ramsundar"
-__copyright__ = "Copyright 2016, Stanford University"
-__license__ = "MIT"
-
 import os
 import shutil
 import logging
 import unittest
 import tempfile
-import deepchem as dc
+import moleculenet
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -25,20 +21,20 @@ class TestReload(unittest.TestCase):
     """Loads or reloads a small version of MUV dataset."""
     # Load MUV dataset
     logger.info("About to featurize compounds")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
-    raw_dataset = dc.utils.save.load_from_disk(dataset_file)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
+    raw_dataset = moleculenet.utils.load_from_disk(dataset_file)
     MUV_tasks = [
         'MUV-692', 'MUV-689', 'MUV-846', 'MUV-859', 'MUV-644', 'MUV-548',
         'MUV-852', 'MUV-600', 'MUV-810', 'MUV-712', 'MUV-737', 'MUV-858',
         'MUV-713', 'MUV-733', 'MUV-652', 'MUV-466', 'MUV-832'
     ]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=MUV_tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file)
     assert len(dataset) == len(raw_dataset)
 
     logger.info("About to split compounds into train/valid/test")
-    splitter = dc.splits.ScaffoldSplitter()
+    splitter = moleculenet.splitters.ScaffoldSplitter()
     frac_train, frac_valid, frac_test = .8, .1, .1
     train_dataset, valid_dataset, test_dataset = \
         splitter.train_valid_test_split(
@@ -57,7 +53,7 @@ class TestReload(unittest.TestCase):
     # reloading will cause the transform to be reapplied. This is undesirable in
     # almost all cases. Need to understand a method to fix this.
     transformers = [
-        dc.trans.BalancingTransformer(transform_w=True, dataset=train_dataset)
+        moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=train_dataset)
     ]
     logger.info("Transforming datasets")
     for dataset in [train_dataset, valid_dataset, test_dataset]:

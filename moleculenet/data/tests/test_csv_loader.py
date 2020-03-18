@@ -4,7 +4,7 @@ from io import StringIO
 import tempfile
 import shutil
 
-import deepchem as dc
+import moleculenet
 
 
 class TestCSVLoader(TestCase):
@@ -14,9 +14,9 @@ class TestCSVLoader(TestCase):
     fin.write("smiles,endpoint\nc1ccccc1,1")
     fin.close()
     print(fin.name)
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["endpoint"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
 
     X = loader.featurize(fin.name)

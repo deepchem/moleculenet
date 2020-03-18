@@ -5,10 +5,8 @@ __author__ = "Bharath Ramsundar"
 __license__ = "MIT"
 
 import os
+import moleculenet
 import unittest
-
-import deepchem as dc
-
 
 class TestFASTALoader(unittest.TestCase):
   """
@@ -22,7 +20,7 @@ class TestFASTALoader(unittest.TestCase):
   def test_fasta_load(self):
     input_file = os.path.join(self.current_dir,
                               "../../data/tests/example.fasta")
-    loader = dc.data.FASTALoader()
+    loader = moleculenet.data.FASTALoader()
     sequences = loader.featurize(input_file)
 
     # example.fasta contains 3 sequences each of length 58.

@@ -1,15 +1,11 @@
 """
 Testing singletask/multitask dataset merging
 """
-__author__ = "Bharath Ramsundar"
-__copyright__ = "Copyright 2016, Stanford University"
-__license__ = "MIT"
-
 import os
 import shutil
 import tempfile
 import unittest
-import deepchem as dc
+import moleculenet
 import numpy as np
 
 
@@ -24,14 +20,14 @@ class TestMerge(unittest.TestCase):
 
     dataset_file = os.path.join(current_dir, "../../models/tests/example.csv")
 
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["log-solubility"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     first_dataset = loader.featurize(dataset_file)
     second_dataset = loader.featurize(dataset_file)
 
-    merged_dataset = dc.data.DiskDataset.merge([first_dataset, second_dataset])
+    merged_dataset = moleculenet.data.DiskDataset.merge([first_dataset, second_dataset])
 
     assert len(merged_dataset) == len(first_dataset) + len(second_dataset)
 
@@ -41,9 +37,9 @@ class TestMerge(unittest.TestCase):
 
     dataset_file = os.path.join(current_dir, "../../models/tests/example.csv")
 
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["log-solubility"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, shard_size=2)
 

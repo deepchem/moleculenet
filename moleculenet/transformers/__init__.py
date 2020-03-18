@@ -1,16 +1,16 @@
 """
 Gathers all transformers in one place for convenient imports
 """
-from deepchem.trans.transformers import undo_transforms
-from deepchem.trans.transformers import undo_grad_transforms
-from deepchem.trans.transformers import LogTransformer
-from deepchem.trans.transformers import ClippingTransformer
-from deepchem.trans.transformers import NormalizationTransformer
-from deepchem.trans.transformers import BalancingTransformer
-from deepchem.trans.transformers import CDFTransformer
-from deepchem.trans.transformers import PowerTransformer
-from deepchem.trans.transformers import CoulombFitTransformer
-from deepchem.trans.transformers import IRVTransformer
-from deepchem.trans.transformers import DAGTransformer
-from deepchem.trans.transformers import ANITransformer
-from deepchem.trans.transformers import MinMaxTransformer
+from moleculenet.transformers.transformers import undo_transforms
+from moleculenet.transformers.transformers import undo_grad_transforms
+from moleculenet.transformers.transformers import LogTransformer
+from moleculenet.transformers.transformers import ClippingTransformer
+from moleculenet.transformers.transformers import NormalizationTransformer
+from moleculenet.transformers.transformers import BalancingTransformer
+from moleculenet.transformers.transformers import CDFTransformer
+from moleculenet.transformers.transformers import PowerTransformer
+from moleculenet.transformers.transformers import CoulombFitTransformer
+from moleculenet.transformers.transformers import IRVTransformer
+from moleculenet.transformers.transformers import DAGTransformer
+from moleculenet.transformers.transformers import ANITransformer
+from moleculenet.transformers.transformers import MinMaxTransformer

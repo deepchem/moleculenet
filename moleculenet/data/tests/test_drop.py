@@ -3,7 +3,7 @@ import shutil
 import logging
 import unittest
 import tempfile
-import deepchem as dc
+import moleculenet
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
@@ -29,10 +29,10 @@ class TestDrop(unittest.TestCase):
 
     # Featurize emols dataset
     logger.info("About to featurize datasets.")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     emols_tasks = ['activity']
 
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=emols_tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file)
 

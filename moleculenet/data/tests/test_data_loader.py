@@ -9,7 +9,7 @@ import os
 import unittest
 import tempfile
 import shutil
-import deepchem as dc
+import moleculenet
 
 
 class TestDataLoader(unittest.TestCase):
@@ -24,8 +24,8 @@ class TestDataLoader(unittest.TestCase):
   def unlabelled_test(self):
     input_file = os.path.join(self.current_dir,
                               "../../data/tests/no_labels.csv")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
-    loader = dc.data.CSVLoader(
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
+    loader = moleculenet.data.CSVLoader(
         tasks=[], smiles_field="smiles", featurizer=featurizer)
     loader.featurize(input_file)
 
@@ -40,16 +40,16 @@ class TestDataLoader(unittest.TestCase):
     task_types = {task: task_type for task in tasks}
     input_file = os.path.join(self.current_dir,
                               "../../models/tests/example.csv")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
 
     input_file = os.path.join(self.current_dir, input_file)
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
 
     dataset = loader.featurize(input_file)
 
     # Splits featurized samples into train/test
-    splitter = dc.splits.ScaffoldSplitter()
+    splitter = moleculenet.splitters.ScaffoldSplitter()
     train_dataset, valid_dataset, test_dataset = splitter.train_valid_test_split(
         dataset)
     assert len(train_dataset) == 8
@@ -67,16 +67,16 @@ class TestDataLoader(unittest.TestCase):
     task_types = {task: task_type for task in tasks}
     input_file = os.path.join(self.current_dir,
                               "../../models/tests/example.csv")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
 
     input_file = os.path.join(self.current_dir, input_file)
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
 
     dataset = loader.featurize(input_file)
 
     # Splits featurized samples into train/test
-    splitter = dc.splits.ScaffoldSplitter()
+    splitter = moleculenet.splitters.ScaffoldSplitter()
     train_dataset, test_dataset = splitter.train_test_split(dataset)
     assert len(train_dataset) == 8
     assert len(test_dataset) == 2
@@ -91,16 +91,16 @@ class TestDataLoader(unittest.TestCase):
     task_types = {task: task_type for task in tasks}
     input_file = os.path.join(self.current_dir,
                               "../../models/tests/example.csv")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
 
     input_file = os.path.join(self.current_dir, input_file)
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
 
     dataset = loader.featurize(input_file)
 
     # Splits featurized samples into train/test
-    splitter = dc.splits.RandomSplitter()
+    splitter = moleculenet.splitters.RandomSplitter()
     train_dataset, valid_dataset, test_dataset = splitter.train_valid_test_split(
         dataset)
     assert len(train_dataset) == 8
@@ -116,14 +116,14 @@ class TestDataLoader(unittest.TestCase):
     task_types = {task: task_type for task in tasks}
     input_file = os.path.join(self.current_dir,
                               "../../models/tests/example.csv")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
-    loader = dc.data.CSVLoader(
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
 
     dataset = loader.featurize(input_file)
 
     # Splits featurized samples into train/test
-    splitter = dc.splits.RandomSplitter()
+    splitter = moleculenet.splits.RandomSplitter()
     train_dataset, test_dataset = splitter.train_test_split(dataset)
     assert len(train_dataset) == 8
     assert len(test_dataset) == 2
@@ -136,10 +136,10 @@ class TestDataLoader(unittest.TestCase):
 
     tasks = ["log-solubility"]
     smiles_field = "smiles"
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks,
         smiles_field="smiles",
-        featurizer=dc.feat.CircularFingerprint(size=1024))
+        featurizer=moleculenet.featurizers.CircularFingerprint(size=1024))
     dataset = loader.featurize(input_file)
 
     assert len(dataset) == 10
@@ -152,9 +152,9 @@ class TestDataLoader(unittest.TestCase):
     dataset_file = os.path.join(self.current_dir,
                                 "../../models/tests/example.csv")
 
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["log-solubility"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     featurized_dataset = loader.featurize(dataset_file, data_dir)
     n_dataset = len(featurized_dataset)
@@ -162,6 +162,6 @@ class TestDataLoader(unittest.TestCase):
     # Now perform move
     shutil.move(data_dir, moved_data_dir)
 
-    moved_featurized_dataset = dc.data.DiskDataset(moved_data_dir)
+    moved_featurized_dataset = moleculenet.data.DiskDataset(moved_data_dir)
 
     assert len(moved_featurized_dataset) == n_dataset

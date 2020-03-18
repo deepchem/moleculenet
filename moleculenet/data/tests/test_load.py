@@ -10,8 +10,8 @@ import shutil
 import logging
 import unittest
 import tempfile
-import deepchem as dc
 import numpy as np
+import moleculenet
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +29,16 @@ class TestLoad(unittest.TestCase):
     moved_data_dir = os.path.join(base_dir, "moved_data")
     dataset_file = os.path.join(current_dir, "../../models/tests/example.csv")
 
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     tasks = ["log-solubility"]
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, data_dir)
 
     X, y, w, ids = (dataset.X, dataset.y, dataset.w, dataset.ids)
     shutil.move(data_dir, moved_data_dir)
 
-    moved_dataset = dc.data.DiskDataset(moved_data_dir)
+    moved_dataset = moleculenet.data.DiskDataset(moved_data_dir)
 
     X_moved, y_moved, w_moved, ids_moved = (moved_dataset.X, moved_dataset.y,
                                             moved_dataset.w, moved_dataset.ids)
@@ -65,11 +65,11 @@ class TestLoad(unittest.TestCase):
 
     # Featurize tox21 dataset
     logger.info("About to featurize dataset.")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     all_tasks = ["task%d" % i for i in range(17)]
 
     ####### Do featurization
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=all_tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, data_dir)
 
@@ -79,7 +79,7 @@ class TestLoad(unittest.TestCase):
 
     ####### Do singletask load
     y_tasks, w_tasks, = [], []
-    dataset = dc.data.DiskDataset(data_dir)
+    dataset = moleculenet.data.DiskDataset(data_dir)
     for ind, task in enumerate(all_tasks):
       logger.info("Processing task %s" % task)
 
@@ -118,14 +118,14 @@ class TestLoad(unittest.TestCase):
 
     # Featurize tox21 dataset
     logger.info("About to featurize dataset.")
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     all_tasks = ["task%d" % i for i in range(17)]
     # For debugging purposes
     n_tasks = 17
     tasks = all_tasks[0:n_tasks]
 
     ####### Do multitask load
-    loader = dc.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, data_dir)
 
@@ -139,7 +139,7 @@ class TestLoad(unittest.TestCase):
       logger.info("Processing task %s" % task)
       if os.path.exists(data_dir):
         shutil.rmtree(data_dir)
-      loader = dc.data.CSVLoader(
+      loader = moleculenet.data.CSVLoader(
           tasks=[task], smiles_field="smiles", featurizer=featurizer)
       dataset = loader.featurize(dataset_file, data_dir)
 
