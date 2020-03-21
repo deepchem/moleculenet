@@ -3,11 +3,11 @@ PPB dataset loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 PPB_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/PPB.csv'
 
 
@@ -36,36 +36,36 @@ def load_ppb(featurizer='ECFP',
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return PPB_tasks, all_dataset, transformers
 
   dataset_file = os.path.join(data_dir, "PPB.csv")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=PPB_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=PPB_URL, dest_dir=data_dir)
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=PPB_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file, shard_size=8192)
 
   if split == None:
     transformers = [
-        deepchem.trans.NormalizationTransformer(
+        moleculenet.transformers.NormalizationTransformer(
             transform_y=True, dataset=dataset)
     ]
 
@@ -76,10 +76,10 @@ def load_ppb(featurizer='ECFP',
     return PPB_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'stratified': deepchem.splits.SingletaskStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'stratified': moleculenet.splitters.SingletaskStratifiedSplitter()
   }
   splitter = splitters[split]
   logger.info("About to split dataset with {} splitter.".format(split))
@@ -94,7 +94,7 @@ def load_ppb(featurizer='ECFP',
       frac_test=frac_test)
 
   transformers = [
-      deepchem.trans.NormalizationTransformer(transform_y=True, dataset=train)
+      moleculenet.transformers.NormalizationTransformer(transform_y=True, dataset=train)
   ]
 
   logger.info("About to transform dataset.")
@@ -104,6 +104,6 @@ def load_ppb(featurizer='ECFP',
     test = transformer.transform(test)
 
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return PPB_tasks, (train, valid, test), transformers

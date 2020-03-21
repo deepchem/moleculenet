@@ -6,9 +6,9 @@ import logging
 import time
 
 import numpy as np
-import deepchem
-from deepchem.molnet.load_function.kaggle_features import merck_descriptors
-from deepchem.molnet.load_function.uv_tasks import UV_tasks
+import moleculenet 
+from moleculenet.load_function.kaggle_features import merck_descriptors
+from moleculenet.load_function.uv_tasks import UV_tasks
 
 logger = logging.getLogger(__name__)
 
@@ -61,21 +61,21 @@ def gen_uv(UV_tasks, data_dir, train_dir, valid_dir, test_dir, shard_size=2000):
   if not os.path.exists(train_files):
 
     logger.info("Downloading training file...")
-    deepchem.utils.download_url(url=TRAIN_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TRAIN_URL, dest_dir=data_dir)
     logger.info("Training file download complete.")
 
     logger.info("Downloading validation file...")
-    deepchem.utils.download_url(url=VALID_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=VALID_URL, dest_dir=data_dir)
     logger.info("Validation file download complete.")
 
     logger.info("Downloading test file...")
-    deepchem.utils.download_url(url=TEST_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TEST_URL, dest_dir=data_dir)
     logger.info("Test file download complete")
 
   # Featurizing datasets
   logger.info("About to featurize UV dataset.")
-  featurizer = deepchem.feat.UserDefinedFeaturizer(merck_descriptors)
-  loader = deepchem.data.UserCSVLoader(
+  featurizer = moleculenet.featurizers.UserDefinedFeaturizer(merck_descriptors)
+  loader = moleculenet.data.UserCSVLoader(
       tasks=UV_tasks, id_field="Molecule", featurizer=featurizer)
 
   logger.info("Featurizing train datasets...")
@@ -139,7 +139,7 @@ def gen_uv(UV_tasks, data_dir, train_dir, valid_dir, test_dir, shard_size=2000):
 def load_uv(shard_size=2000, featurizer=None, split=None, reload=True):
   """Load UV dataset; does not do train/test split"""
 
-  data_dir = deepchem.utils.get_data_dir()
+  data_dir = moleculenet.utils.get_data_dir()
   data_dir = os.path.join(data_dir, "UV")
 
   if not os.path.exists(data_dir):
@@ -153,9 +153,9 @@ def load_uv(shard_size=2000, featurizer=None, split=None, reload=True):
       os.path.exists(test_dir)):
 
     logger.info("Reloading existing datasets")
-    train_dataset = deepchem.data.DiskDataset(train_dir)
-    valid_dataset = deepchem.data.DiskDataset(valid_dir)
-    test_dataset = deepchem.data.DiskDataset(test_dir)
+    train_dataset = moleculenet.data.DiskDataset(train_dir)
+    valid_dataset = moleculenet.data.DiskDataset(valid_dir)
+    test_dataset = moleculenet.data.DiskDataset(test_dir)
 
   else:
     logger.info("Featurizing datasets")

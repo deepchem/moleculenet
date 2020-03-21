@@ -3,13 +3,13 @@ HPPB Dataset Loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
 HPPB_URL = "http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/hppb.csv"
-DEFAULT_DATA_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DATA_DIR = moleculenet.utils.get_data_dir()
 
 
 def remove_missing_entries(dataset):
@@ -53,7 +53,7 @@ def load_hppb(featurizer="ECFP",
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return hppb_tasks, all_dataset, transformers
@@ -61,27 +61,27 @@ def load_hppb(featurizer="ECFP",
   dataset_file = os.path.join(data_dir, "hppb.csv")
   if not os.path.exists(dataset_file):
     logger.info("{} does not exist. Downloading it.".format(dataset_file))
-    deepchem.utils.download_url(url=hppb_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=hppb_URL, dest_dir=data_dir)
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == 'AdjacencyConv':
-    featurizer = deepchem.feat.AdjacencyFingerprint(
+    featurizer = moleculenet.featurizers.AdjacencyFingerprint(
         max_n_atoms=150, max_valence=6)
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
   logger.info("Featurizing datasets.")
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=hppb_tasks, smiles_field='smile', featurizer=featurizer)
   dataset = loader.featurize(input_files=[dataset_file], shard_size=2000)
 
@@ -98,11 +98,11 @@ def load_hppb(featurizer="ECFP",
     return hppb_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'butina': deepchem.splits.ButinaSplitter(),
-      'stratified': deepchem.splits.SingletaskStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'butina': moleculenet.splitters.ButinaSplitter(),
+      'stratified': moleculenet.splitters.SingletaskStratifiedSplitter()
   }
   splitter = splitters[split]
   frac_train = kwargs.get("frac_train", 0.8)
@@ -126,6 +126,6 @@ def load_hppb(featurizer="ECFP",
 
   if reload:
     logger.info("Saving file to {}.".format(save_folder))
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return hppb_tasks, (train, valid, test), transformers

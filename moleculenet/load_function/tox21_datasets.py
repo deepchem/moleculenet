@@ -3,12 +3,12 @@ Tox21 dataset loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
 TOX21_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/tox21.csv.gz'
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 
 
 def load_tox21(featurizer='ECFP',
@@ -38,40 +38,40 @@ def load_tox21(featurizer='ECFP',
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return tox21_tasks, all_dataset, transformers
 
   dataset_file = os.path.join(data_dir, "tox21.csv.gz")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=TOX21_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TOX21_URL, dest_dir=data_dir)
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == 'AdjacencyConv':
-    featurizer = deepchem.feat.AdjacencyFingerprint(
+    featurizer = moleculenet.featurizers.AdjacencyFingerprint(
         max_n_atoms=150, max_valence=6)
   elif featurizer == "smiles2img":
     img_size = kwargs.get("img_size", 80)
     img_spec = kwargs.get("img_spec", "std")
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=tox21_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file, shard_size=8192)
 
   if split == None:
     # Initialize transformers
     transformers = [
-        deepchem.trans.BalancingTransformer(transform_w=True, dataset=dataset)
+        moleculenet.trans.BalancingTransformer(transform_w=True, dataset=dataset)
     ]
 
     logger.info("About to transform data")
@@ -81,12 +81,12 @@ def load_tox21(featurizer='ECFP',
     return tox21_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'butina': deepchem.splits.ButinaSplitter(),
-      'task': deepchem.splits.TaskSplitter(),
-      'stratified': deepchem.splits.RandomStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'butina': moleculenet.splitters.ButinaSplitter(),
+      'task': moleculenet.splitters.TaskSplitter(),
+      'stratified': moleculenet.splitters.RandomStratifiedSplitter()
   }
   splitter = splitters[split]
   if split == 'task':
@@ -105,7 +105,7 @@ def load_tox21(featurizer='ECFP',
     all_dataset = (train, valid, test)
 
     transformers = [
-        deepchem.trans.BalancingTransformer(transform_w=True, dataset=train)
+        moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=train)
     ]
 
     logger.info("About to transform data")
@@ -115,6 +115,6 @@ def load_tox21(featurizer='ECFP',
       test = transformer.transform(test)
 
     if reload:
-      deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+      moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                                transformers)
   return tox21_tasks, all_dataset, transformers

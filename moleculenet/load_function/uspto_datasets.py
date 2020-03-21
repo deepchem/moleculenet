@@ -6,13 +6,13 @@ This file contains loaders for synthetic reaction datasets from the US Patenent 
 import os
 import csv
 import logging
-import deepchem
+import moleculenet 
 import numpy as np
-from deepchem.data import DiskDataset
+from moleculenet.data import DiskDataset
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 USPTO_URL = "https://bitbucket.org/dan2097/patent-reaction-extraction/downloads/2008-2011_USPTO_reactionSmiles_filtered.zip"
 
 
@@ -52,7 +52,7 @@ def load_uspto(featurizer="plain",
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return uspto_tasks, all_dataset, transformers
@@ -60,12 +60,12 @@ def load_uspto(featurizer="plain",
   dataset_file = os.path.join(data_dir,
                               "2008-2011_USPTO_reactionSmiles_filtered.zip")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=USPTO_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=USPTO_URL, dest_dir=data_dir)
 
   # Unzip
   unzip_dir = os.path.join(data_dir, "2008-2011_USPTO_reactionSmiles_filtered")
   if not os.path.exists(unzip_dir):
-    deepchem.utils.unzip_file(dataset_file, dest_dir=unzip_dir)
+    moleculenet.utils.unzip_file(dataset_file, dest_dir=unzip_dir)
   # Unzipped file is a tap seperated values file (despite the .txt)
   filename = os.path.join(unzip_dir,
                           "2008-2011_USPTO_reactionSmiles_filtered.txt")

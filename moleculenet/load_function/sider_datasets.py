@@ -3,11 +3,11 @@ SIDER dataset loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 SIDER_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/sider.csv.gz'
 
 
@@ -33,15 +33,15 @@ def load_sider(featurizer='ECFP',
 
   dataset_file = os.path.join(data_dir, "sider.csv.gz")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=SIDER_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=SIDER_URL, dest_dir=data_dir)
 
-  dataset = deepchem.utils.save.load_from_disk(dataset_file)
+  dataset = moleculenet.utils.load_from_disk(dataset_file)
   logger.info("Columns of dataset: %s" % str(dataset.columns.values))
   logger.info("Number of examples in dataset: %s" % str(dataset.shape[0]))
   SIDER_tasks = dataset.columns.values[1:].tolist()
 
   if reload:
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return SIDER_tasks, all_dataset, transformers
@@ -49,30 +49,30 @@ def load_sider(featurizer='ECFP',
   # Featurize SIDER dataset
   logger.info("About to featurize SIDER dataset.")
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
   logger.info("SIDER tasks: %s" % str(SIDER_tasks))
   logger.info("%d tasks in total" % len(SIDER_tasks))
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=SIDER_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file)
   logger.info("%d datapoints in SIDER dataset" % len(dataset))
 
   # Initialize transformers
   transformers = [
-      deepchem.trans.BalancingTransformer(transform_w=True, dataset=dataset)
+      moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=dataset)
   ]
   logger.info("About to transform data")
   for transformer in transformers:
@@ -82,11 +82,11 @@ def load_sider(featurizer='ECFP',
     return SIDER_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'task': deepchem.splits.TaskSplitter(),
-      'stratified': deepchem.splits.RandomStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'task': moleculenet.splitters.TaskSplitter(),
+      'stratified': moleculenet.splitters.RandomStratifiedSplitter()
   }
   splitter = splitters[split]
   if split == 'task':
@@ -103,7 +103,7 @@ def load_sider(featurizer='ECFP',
         frac_valid=frac_valid,
         frac_test=frac_test)
     if reload:
-      deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+      moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                                transformers)
     all_dataset = (train, valid, test)
   return SIDER_tasks, all_dataset, transformers

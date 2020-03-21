@@ -7,45 +7,45 @@ import os
 import re
 import time
 
-import deepchem
+import moleculenet 
 import numpy as np
 import pandas as pd
 import tarfile
-from deepchem.feat import rdkit_grid_featurizer as rgf
-from deepchem.feat.atomic_coordinates import ComplexNeighborListFragmentAtomicCoordinates
-from deepchem.feat.graph_features import AtomicConvFeaturizer
+from moleculenet.featurizers import rdkit_grid_featurizer as rgf
+from moleculenet.featurizers.atomic_coordinates import ComplexNeighborListFragmentAtomicCoordinates
+from moleculenet.featurizers.graph_features import AtomicConvFeaturizer
 
 logger = logging.getLogger(__name__)
-DEFAULT_DATA_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DATA_DIR = moleculenet.utils.get_data_dir()
 
 
 def featurize_pdbbind(data_dir=None, feat="grid", subset="core"):
   """Featurizes pdbbind according to provided featurization"""
   tasks = ["-logKd/Ki"]
-  data_dir = deepchem.utils.get_data_dir()
+  data_dir = moelculenet.utils.get_data_dir()
   pdbbind_dir = os.path.join(data_dir, "pdbbind")
   dataset_dir = os.path.join(pdbbind_dir, "%s_%s" % (subset, feat))
 
   if not os.path.exists(dataset_dir):
-    deepchem.utils.download_url(
+    moleculnet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/featurized_datasets/core_grid.tar.gz'
     )
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/featurized_datasets/full_grid.tar.gz'
     )
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/featurized_datasets/refined_grid.tar.gz'
     )
     if not os.path.exists(pdbbind_dir):
       os.system('mkdir ' + pdbbind_dir)
-    deepchem.utils.untargz_file(
+    moleculenet.utils.untargz_file(
         os.path.join(data_dir, 'core_grid.tar.gz'), pdbbind_dir)
-    deepchem.utils.untargz_file(
+    moleculenet.utils.untargz_file(
         os.path.join(data_dir, 'full_grid.tar.gz'), pdbbind_dir)
-    deepchem.utils.untargz_file(
+    moleculenet.utils.untargz_file(
         os.path.join(data_dir, 'refined_grid.tar.gz'), pdbbind_dir)
 
-  return deepchem.data.DiskDataset(dataset_dir), tasks
+  return moleculenet.data.DiskDataset(dataset_dir), tasks
 
 
 def load_pdbbind_grid(split="random",
@@ -57,9 +57,9 @@ def load_pdbbind_grid(split="random",
     dataset, tasks = featurize_pdbbind(feat=featurizer, subset=subset)
 
     splitters = {
-        'index': deepchem.splits.IndexSplitter(),
-        'random': deepchem.splits.RandomSplitter(),
-        'time': deepchem.splits.TimeSplitterPDBbind(dataset.ids)
+        'index': moleculenet.splitters.IndexSplitter(),
+        'random': moleculenet.splitters.RandomSplitter(),
+        'time': moleculenet.splitters.TimeSplitterPDBbind(dataset.ids)
     }
     splitter = splitters[split]
     train, valid, test = splitter.train_valid_test_split(dataset)
@@ -76,7 +76,7 @@ def load_pdbbind_grid(split="random",
     return tasks, all_dataset, transformers
 
   else:
-    data_dir = deepchem.utils.get_data_dir()
+    data_dir = moleculenet.utils.get_data_dir()
     if reload:
       save_dir = os.path.join(
           data_dir, "pdbbind_" + subset + "/" + featurizer + "/" + str(split))
@@ -84,34 +84,34 @@ def load_pdbbind_grid(split="random",
     dataset_file = os.path.join(data_dir, subset + "_smiles_labels.csv")
 
     if not os.path.exists(dataset_file):
-      deepchem.utils.download_url(
+      moleculenet.utils.download_url(
           'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/' +
           subset + "_smiles_labels.csv")
 
     tasks = ["-logKd/Ki"]
     if reload:
-      loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+      loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
           save_dir)
       if loaded:
         return tasks, all_dataset, transformers
 
     if featurizer == 'ECFP':
-      featurizer = deepchem.feat.CircularFingerprint(size=1024)
+      featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     elif featurizer == 'GraphConv':
-      featurizer = deepchem.feat.ConvMolFeaturizer()
+      featurizer = moleculenet.featurizers.ConvMolFeaturizer()
     elif featurizer == 'Weave':
-      featurizer = deepchem.feat.WeaveFeaturizer()
+      featurizer = moleculenet.featurizers.WeaveFeaturizer()
     elif featurizer == 'Raw':
-      featurizer = deepchem.feat.RawFeaturizer()
+      featurizer = moleculenet.featurizers.RawFeaturizer()
 
-    loader = deepchem.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=tasks, smiles_field="smiles", featurizer=featurizer)
     dataset = loader.featurize(dataset_file, shard_size=8192)
     df = pd.read_csv(dataset_file)
 
     if split == None:
       transformers = [
-          deepchem.trans.NormalizationTransformer(
+          moleculenet.transformers.NormalizationTransformer(
               transform_y=True, dataset=dataset)
       ]
 
@@ -121,17 +121,17 @@ def load_pdbbind_grid(split="random",
       return tasks, (dataset, None, None), transformers
 
     splitters = {
-        'index': deepchem.splits.IndexSplitter(),
-        'random': deepchem.splits.RandomSplitter(),
-        'scaffold': deepchem.splits.ScaffoldSplitter(),
-        'time': deepchem.splits.TimeSplitterPDBbind(np.array(df['id']))
+        'index': moleculenet.splitters.IndexSplitter(),
+        'random': moleculenet.splitters.RandomSplitter(),
+        'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+        'time': moleculenet.splitters.TimeSplitterPDBbind(np.array(df['id']))
     }
     splitter = splitters[split]
     logger.info("About to split dataset with {} splitter.".format(split))
     train, valid, test = splitter.train_valid_test_split(dataset)
 
     transformers = [
-        deepchem.trans.NormalizationTransformer(
+        moleculenet.transformers.NormalizationTransformer(
             transform_y=True, dataset=train)
     ]
 
@@ -142,7 +142,7 @@ def load_pdbbind_grid(split="random",
       test = transformer.transform(test)
 
     if reload:
-      deepchem.utils.save.save_dataset_to_disk(save_dir, train, valid, test,
+      moleculenet.utils.save_dataset_to_disk(save_dir, train, valid, test,
                                                transformers)
 
     return tasks, (train, valid, test), transformers
@@ -185,8 +185,6 @@ def load_pdbbind(reload=True,
 
   pdbbind_tasks = ["-logKd/Ki"]
 
-  deepchem_dir = deepchem.utils.get_data_dir()
-
   if data_dir == None:
     data_dir = DEFAULT_DATA_DIR
   data_folder = os.path.join(data_dir, "pdbbind", "v2015")
@@ -212,7 +210,7 @@ def load_pdbbind(reload=True,
     else:
       print(
           "\nLoading featurized and splitted dataset from:\n%s\n" % save_folder)
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return pdbbind_tasks, all_dataset, transformers
@@ -220,7 +218,7 @@ def load_pdbbind(reload=True,
   dataset_file = os.path.join(data_dir, "pdbbind_v2015.tar.gz")
   if not os.path.exists(dataset_file):
     logger.warning("About to download PDBBind full dataset. Large file, 2GB")
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/' +
         "pdbbind_v2015.tar.gz",
         dest_dir=data_dir)
@@ -228,7 +226,7 @@ def load_pdbbind(reload=True,
     logger.info("PDBBind full dataset already exists.")
   else:
     print("Untarring full dataset...")
-    deepchem.utils.untargz_file(
+    moleculenet.utils.untargz_file(
         dataset_file, dest_dir=os.path.join(data_dir, "pdbbind"))
 
   print("\nRaw dataset:\n%s" % data_folder)
@@ -319,7 +317,7 @@ def load_pdbbind(reload=True,
   ids = np.delete(pdbs, failures)
 
   print("\nConstruct dataset excluding failing featurization elements...")
-  dataset = deepchem.data.DiskDataset.from_numpy(features, y=labels, ids=ids)
+  dataset = moleculenet.data.DiskDataset.from_numpy(features, y=labels, ids=ids)
 
   # No transformations of data
   transformers = []
@@ -332,14 +330,14 @@ def load_pdbbind(reload=True,
   # TODO(rbharath): This should be modified to contain a cluster split so
   # structures of the same protein aren't in both train/test
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
   }
   splitter = splitters[split]
   train, valid, test = splitter.train_valid_test_split(dataset, seed=split_seed)
 
   all_dataset = (train, valid, test)
   print("\nSaving dataset to \"%s\" ..." % save_folder)
-  deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+  moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                            transformers)
   return pdbbind_tasks, all_dataset, transformers

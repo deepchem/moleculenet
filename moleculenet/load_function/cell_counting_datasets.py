@@ -7,11 +7,11 @@ available for this dataset, so only raw images are provided.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 DATASET_URL = 'http://www.robots.ox.ac.uk/~vgg/research/counting/cells.zip'
 
 
@@ -34,15 +34,15 @@ def load_cell_counting(split=None,
   featurizer = ""
   if reload:
     save_folder = os.path.join(save_dir, "cell_counting-featurized", str(split))
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return cell_counting_tasks, all_dataset, transformers
   dataset_file = os.path.join(data_dir, "cells.zip")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=DATASET_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=DATASET_URL, dest_dir=data_dir)
 
-  loader = deepchem.data.ImageLoader()
+  loader = moleculenet.data.ImageLoader()
   dataset = loader.featurize(dataset_file)
 
   transformers = []
@@ -52,8 +52,8 @@ def load_cell_counting(split=None,
     return cell_counting_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
   }
   if split not in splitters:
     raise ValueError("Only index and random splits supported.")
@@ -72,6 +72,6 @@ def load_cell_counting(split=None,
   transformers = []
   all_dataset = (train, valid, test)
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return cell_counting_tasks, all_dataset, transformers

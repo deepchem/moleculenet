@@ -5,11 +5,11 @@ Author - Aneesh Pappu
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 NCI_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/nci_unique.csv'
 
 
@@ -49,32 +49,32 @@ def load_nci(featurizer='ECFP',
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return all_nci_tasks, all_dataset, transformers
 
   dataset_file = os.path.join(data_dir, "nci_unique.csv")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=NCI_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=NCI_URL, dest_dir=data_dir)
 
   # Featurize nci dataset
   logger.info("About to featurize nci dataset.")
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=all_nci_tasks, smiles_field="smiles", featurizer=featurizer)
 
   dataset = loader.featurize(dataset_file, shard_size=shard_size)
@@ -82,7 +82,7 @@ def load_nci(featurizer='ECFP',
   if split == None:
     logger.info("Split is None, about to transform data")
     transformers = [
-        deepchem.trans.NormalizationTransformer(
+        moleculenet.transformers.NormalizationTransformer(
             transform_y=True, dataset=dataset)
     ]
     for transformer in transformers:
@@ -90,9 +90,9 @@ def load_nci(featurizer='ECFP',
     return all_nci_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter()
   }
   splitter = splitters[split]
   logger.info("About to split data with {} splitter.".format(splitter))
@@ -107,7 +107,7 @@ def load_nci(featurizer='ECFP',
       frac_test=frac_test)
 
   transformers = [
-      deepchem.trans.NormalizationTransformer(transform_y=True, dataset=train)
+      moleculenet.transformers.NormalizationTransformer(transform_y=True, dataset=train)
   ]
 
   logger.info("About to transform dataset.")
@@ -117,6 +117,6 @@ def load_nci(featurizer='ECFP',
     test = transformer.transform(test)
 
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return all_nci_tasks, (train, valid, test), transformers

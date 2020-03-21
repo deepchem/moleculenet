@@ -6,11 +6,11 @@ import numpy as np
 import logging
 import gzip
 import shutil
-import deepchem as dc
 import pickle
+import moleculenet
 
-from deepchem.feat import SmilesToSeq, SmilesToImage
-from deepchem.feat.smiles_featurizers import create_char_to_idx
+from moleculenet.featurizers import SmilesToSeq, SmilesToImage
+from moleculenet.featurizers.smiles_featurizers import create_char_to_idx
 
 CHEMBL_URL = "https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/chembl_25.csv.gz"
 DEFAULT_DIR = dc.utils.get_data_dir()
@@ -97,13 +97,13 @@ def load_chembl25(featurizer="smiles2seq",
     dc.utils.download_url(url=CHEMBL_URL, dest_dir=data_dir)
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == "smiles2seq":
     max_len = kwargs.get('max_len', 250)
     pad_len = kwargs.get('pad_len', 10)

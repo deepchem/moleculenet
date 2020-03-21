@@ -6,8 +6,8 @@ import logging
 import time
 
 import numpy as np
-import deepchem
-from deepchem.molnet.load_function.kaggle_features import merck_descriptors
+import moleculenet 
+from moleculenet.load_function.kaggle_features import merck_descriptors
 
 logger = logging.getLogger(__name__)
 
@@ -58,21 +58,21 @@ def gen_kaggle(KAGGLE_tasks,
   test_files = os.path.join(data_dir,
                             "KAGGLE_test2_disguised_combined_full.csv.gz")
   if not os.path.exists(train_files):
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/KAGGLE_training_disguised_combined_full.csv.gz',
         dest_dir=data_dir)
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/KAGGLE_test1_disguised_combined_full.csv.gz',
         dest_dir=data_dir)
-    deepchem.utils.download_url(
+    moleculenet.utils.download_url(
         'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/KAGGLE_test2_disguised_combined_full.csv.gz',
         dest_dir=data_dir)
 
   # Featurize KAGGLE dataset
   logger.info("About to featurize KAGGLE dataset.")
-  featurizer = deepchem.feat.UserDefinedFeaturizer(merck_descriptors)
+  featurizer = moleculenet.featurizers.UserDefinedFeaturizer(merck_descriptors)
 
-  loader = deepchem.data.UserCSVLoader(
+  loader = moleculenet.data.UserCSVLoader(
       tasks=KAGGLE_tasks, id_field="Molecule", featurizer=featurizer)
 
   logger.info("Featurizing train datasets")
@@ -122,7 +122,7 @@ def load_kaggle(shard_size=2000, featurizer=None, split=None, reload=True):
       '3A4', 'CB1', 'DPP4', 'HIVINT', 'HIV_PROT', 'LOGD', 'METAB', 'NK1', 'OX1',
       'OX2', 'PGP', 'PPB', 'RAT_F', 'TDI', 'THROMBIN'
   ]
-  data_dir = deepchem.utils.get_data_dir()
+  data_dir = moleculenet.utils.get_data_dir()
 
   data_dir = os.path.join(data_dir, "kaggle")
   if not os.path.exists(data_dir):
@@ -134,9 +134,9 @@ def load_kaggle(shard_size=2000, featurizer=None, split=None, reload=True):
   if (os.path.exists(train_dir) and os.path.exists(valid_dir) and
       os.path.exists(test_dir)):
     logger.info("Reloading existing datasets")
-    train_dataset = deepchem.data.DiskDataset(train_dir)
-    valid_dataset = deepchem.data.DiskDataset(valid_dir)
-    test_dataset = deepchem.data.DiskDataset(test_dir)
+    train_dataset = moleculenet.data.DiskDataset(train_dir)
+    valid_dataset = moleculenet.data.DiskDataset(valid_dir)
+    test_dataset = moleculenet.data.DiskDataset(test_dir)
   else:
     logger.info("Featurizing datasets")
     train_dataset, valid_dataset, test_dataset = \

@@ -5,11 +5,11 @@ import os
 import numpy as np
 import shutil
 import logging
-import deepchem as dc
+import moleculenet
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = dc.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 SWEETLEAD_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/sweet.csv.gz'
 
 
@@ -37,7 +37,7 @@ def load_sweet(featurizer='ECFP',
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = dc.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return SWEET_tasks, all_dataset, transformers
@@ -45,25 +45,25 @@ def load_sweet(featurizer='ECFP',
   # Featurize SWEET dataset
   logger.info("About to featurize SWEET dataset.")
   if featurizer == 'ECFP':
-    featurizer = dc.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
   else:
     raise ValueError("Other featurizations not supported")
 
   dataset_file = os.path.join(data_dir, "sweet.csv.gz")
   if not os.path.exists(dataset_file):
-    dc.utils.download_url(SWEETLEAD_URL)
-  loader = dc.data.CSVLoader(
+    moleculenet.utils.download_url(SWEETLEAD_URL)
+  loader = moleculenet.data.CSVLoader(
       tasks=SWEET_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file)
 
   # Initialize transformers
   transformers = [
-      dc.trans.BalancingTransformer(transform_w=True, dataset=dataset)
+      moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=dataset)
   ]
   logger.info("About to transform data")
   for transformer in transformers:
@@ -73,11 +73,11 @@ def load_sweet(featurizer='ECFP',
     return SWEET_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': dc.splits.IndexSplitter(),
-      'random': dc.splits.RandomSplitter(),
-      'scaffold': dc.splits.ScaffoldSplitter(),
-      'task': dc.splits.TaskSplitter(),
-      'stratified': dc.splits.RandomStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'task': moleculenet.splitters.TaskSplitter(),
+      'stratified': moleculenet.splitters.RandomStratifiedSplitter()
   }
   splitter = splitters[split]
   frac_train = kwargs.get("frac_train", 0.8)
@@ -91,7 +91,7 @@ def load_sweet(featurizer='ECFP',
       frac_test=frac_test)
 
   if reload:
-    dc.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                        transformers)
     all_dataset = (train, valid, test)
 

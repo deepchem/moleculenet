@@ -6,11 +6,11 @@ This file contains image loaders for the BBBC dataset collection (https://data.b
 import os
 import numpy as np
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 BBBC1_IMAGE_URL = 'https://data.broadinstitute.org/bbbc/BBBC001/BBBC001_v1_images_tif.zip'
 BBBC1_LABEL_URL = 'https://data.broadinstitute.org/bbbc/BBBC001/BBBC001_v1_counts.txt'
 
@@ -40,7 +40,7 @@ def load_bbbc001(split='index',
 
   if reload:
     save_folder = os.path.join(save_dir, "bbbc001-featurized", str(split))
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return bbbc001_tasks, all_dataset, transformers
@@ -48,11 +48,11 @@ def load_bbbc001(split='index',
   labels_file = os.path.join(data_dir, "BBBC001_v1_counts.txt")
 
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=BBBC1_IMAGE_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=BBBC1_IMAGE_URL, dest_dir=data_dir)
   if not os.path.exists(labels_file):
-    deepchem.utils.download_url(url=BBBC1_LABEL_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=BBBC1_LABEL_URL, dest_dir=data_dir)
   # Featurize Images into NumpyArrays
-  loader = deepchem.data.ImageLoader()
+  loader = moleculenet.data.ImageLoader()
   dataset = loader.featurize(dataset_file, in_memory=False)
 
   # Load text file with labels
@@ -66,7 +66,7 @@ def load_bbbc001(split='index',
   y = np.array(counts)
 
   # This is kludgy way to add y to dataset. Can be done better?
-  dataset = deepchem.data.DiskDataset.from_numpy(dataset.X, y)
+  dataset = moleculenet.data.DiskDataset.from_numpy(dataset.X, y)
 
   if split == None:
     transformers = []
@@ -74,8 +74,8 @@ def load_bbbc001(split='index',
     return bbbc001_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
   }
   if split not in splitters:
     raise ValueError("Only index and random splits supported.")
@@ -94,7 +94,7 @@ def load_bbbc001(split='index',
   transformers = []
   all_dataset = (train, valid, test)
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return bbbc001_tasks, all_dataset, transformers
 
@@ -122,7 +122,7 @@ def load_bbbc002(split='index',
 
   if reload:
     save_folder = os.path.join(save_dir, "bbbc002-featurized", str(split))
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return bbbc002_tasks, all_dataset, transformers
@@ -130,11 +130,11 @@ def load_bbbc002(split='index',
   labels_file = os.path.join(data_dir, "BBBC002_v1_counts.txt")
 
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=BBBC2_IMAGE_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=BBBC2_IMAGE_URL, dest_dir=data_dir)
   if not os.path.exists(labels_file):
-    deepchem.utils.download_url(url=BBBC2_LABEL_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=BBBC2_LABEL_URL, dest_dir=data_dir)
   # Featurize Images into NumpyArrays
-  loader = deepchem.data.ImageLoader()
+  loader = moleculenet.data.ImageLoader()
   dataset = loader.featurize(dataset_file, in_memory=False)
 
   # Load text file with labels
@@ -149,7 +149,7 @@ def load_bbbc002(split='index',
   ids = [x[0] for x in lines]
 
   # This is kludgy way to add y to dataset. Can be done better?
-  dataset = deepchem.data.DiskDataset.from_numpy(dataset.X, y, ids=ids)
+  dataset = moleculenet.data.DiskDataset.from_numpy(dataset.X, y, ids=ids)
 
   if split == None:
     transformers = []
@@ -157,8 +157,8 @@ def load_bbbc002(split='index',
     return bbbc002_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
   }
   if split not in splitters:
     raise ValueError("Only index and random splits supported.")
@@ -177,6 +177,6 @@ def load_bbbc002(split='index',
   all_dataset = (train, valid, test)
   transformers = []
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return bbbc002_tasks, all_dataset, transformers

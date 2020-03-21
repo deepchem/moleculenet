@@ -6,8 +6,8 @@ import logging
 import time
 
 import numpy as np
-import deepchem
-from deepchem.molnet.load_function.kaggle_features import merck_descriptors
+import moleculenet 
+from moleculenet.load_function.kaggle_features import merck_descriptors
 
 TRAIN_URL = 'https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/KINASE_training_disguised_combined_full.csv.gz'
 VALID_URL = 'https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/KINASE_test1_disguised_combined_full.csv.gz'
@@ -64,22 +64,22 @@ def gen_kinase(KINASE_tasks,
   if not os.path.exists(train_files):
 
     logger.info("Downloading training file...")
-    deepchem.utils.download_url(url=TRAIN_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TRAIN_URL, dest_dir=data_dir)
     logger.info("Training file download complete.")
 
     logger.info("Downloading validation file...")
-    deepchem.utils.download_url(url=VALID_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=VALID_URL, dest_dir=data_dir)
     logger.info("Validation file download complete.")
 
     logger.info("Downloading test file...")
-    deepchem.utils.download_url(url=TEST_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TEST_URL, dest_dir=data_dir)
     logger.info("Test file download complete")
 
   # Featurize the KINASE dataset
   logger.info("About to featurize KINASE dataset.")
-  featurizer = deepchem.feat.UserDefinedFeaturizer(merck_descriptors)
+  featurizer = moleculenet.featurizers.UserDefinedFeaturizer(merck_descriptors)
 
-  loader = deepchem.data.UserCSVLoader(
+  loader = moleculenet.data.UserCSVLoader(
       tasks=KINASE_tasks, id_field="Molecule", featurizer=featurizer)
 
   logger.info("Featurizing train datasets...")
@@ -164,7 +164,7 @@ def load_kinase(shard_size=2000, featurizer=None, split=None, reload=True):
       'T_00109', 'T_00110', 'T_00111'
   ]
 
-  data_dir = deepchem.utils.get_data_dir()
+  data_dir = moleculenet.utils.get_data_dir()
   data_dir = os.path.join(data_dir, "kinase")
 
   if not os.path.exists(data_dir):
@@ -178,9 +178,9 @@ def load_kinase(shard_size=2000, featurizer=None, split=None, reload=True):
       os.path.exists(test_dir)):
 
     logger.info("Reloading existing datasets")
-    train_dataset = deepchem.data.DiskDataset(train_dir)
-    valid_dataset = deepchem.data.DiskDataset(valid_dir)
-    test_dataset = deepchem.data.DiskDataset(test_dir)
+    train_dataset = moleculenet.data.DiskDataset(train_dir)
+    valid_dataset = moleculenet.data.DiskDataset(valid_dir)
+    test_dataset = moleculenet.data.DiskDataset(test_dir)
 
   else:
     logger.info("Featurizing datasets")

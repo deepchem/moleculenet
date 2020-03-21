@@ -3,11 +3,11 @@ TOXCAST dataset loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 TOXCAST_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/toxcast_data.csv.gz'
 
 
@@ -31,15 +31,15 @@ def load_toxcast(featurizer='ECFP',
 
   dataset_file = os.path.join(data_dir, "toxcast_data.csv.gz")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=TOXCAST_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=TOXCAST_URL, dest_dir=data_dir)
 
-  dataset = deepchem.utils.save.load_from_disk(dataset_file)
+  dataset = moleculenet.utils.load_from_disk(dataset_file)
   logger.info("Columns of dataset: %s" % str(dataset.columns.values))
   logger.info("Number of examples in dataset: %s" % str(dataset.shape[0]))
   TOXCAST_tasks = dataset.columns.values[1:].tolist()
 
   if reload:
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return TOXCAST_tasks, all_dataset, transformers
@@ -48,26 +48,26 @@ def load_toxcast(featurizer='ECFP',
   logger.info("About to featurize TOXCAST dataset.")
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == "smiles2img":
     img_spec = kwargs.get("img_spec", "std")
     img_size = kwargs.get("img_size", 80)
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=TOXCAST_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file)
 
   if split == None:
     transformers = [
-        deepchem.trans.BalancingTransformer(transform_w=True, dataset=dataset)
+        moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=dataset)
     ]
     logger.info("Split is None, about to transform data.")
     for transformer in transformers:
@@ -75,10 +75,10 @@ def load_toxcast(featurizer='ECFP',
     return TOXCAST_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'stratified': deepchem.splits.RandomStratifiedSplitter()
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'stratified': moleculenet.splitters.RandomStratifiedSplitter()
   }
   splitter = splitters[split]
   logger.info("About to split dataset with {} splitter.".format(split))
@@ -93,7 +93,7 @@ def load_toxcast(featurizer='ECFP',
       frac_test=frac_test)
 
   transformers = [
-      deepchem.trans.BalancingTransformer(transform_w=True, dataset=train)
+      moleculenet.transformers.BalancingTransformer(transform_w=True, dataset=train)
   ]
 
   logger.info("About to transform dataset.")
@@ -103,7 +103,7 @@ def load_toxcast(featurizer='ECFP',
     test = transformer.transform(test)
 
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
 
   return TOXCAST_tasks, (train, valid, test), transformers

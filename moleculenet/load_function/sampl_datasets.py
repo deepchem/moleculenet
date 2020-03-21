@@ -3,12 +3,12 @@ SAMPL dataset loader.
 """
 import os
 import logging
-import deepchem
+import moleculenet 
 
 logger = logging.getLogger(__name__)
 
 SAMPL_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/SAMPL.csv'
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 
 
 def load_sampl(featurizer='ECFP',
@@ -42,37 +42,37 @@ def load_sampl(featurizer='ECFP',
 
   dataset_file = os.path.join(data_dir, "SAMPL.csv")
   if not os.path.exists(dataset_file):
-    deepchem.utils.download_url(url=SAMPL_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=SAMPL_URL, dest_dir=data_dir)
 
   SAMPL_tasks = ['expt']
 
   if reload:
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return SAMPL_tasks, all_dataset, transformers
 
   if featurizer == 'ECFP':
-    featurizer = deepchem.feat.CircularFingerprint(size=1024)
+    featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
   elif featurizer == 'GraphConv':
-    featurizer = deepchem.feat.ConvMolFeaturizer()
+    featurizer = moleculenet.featurizers.ConvMolFeaturizer()
   elif featurizer == 'Weave':
-    featurizer = deepchem.feat.WeaveFeaturizer()
+    featurizer = moleculenet.featurizers.WeaveFeaturizer()
   elif featurizer == 'Raw':
-    featurizer = deepchem.feat.RawFeaturizer()
+    featurizer = moleculenet.featurizers.RawFeaturizer()
   elif featurizer == 'smiles2img':
     img_size = kwargs.get("img_size", 80)
     img_spec = kwargs.get("img_spec", "std")
-    featurizer = deepchem.feat.SmilesToImage(
+    featurizer = moleculenet.featurizers.SmilesToImage(
         img_size=img_size, img_spec=img_spec)
 
-  loader = deepchem.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=SAMPL_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file, shard_size=8192)
 
   if split == None:
     transformers = [
-        deepchem.trans.NormalizationTransformer(
+        moleculenet.transformers.NormalizationTransformer(
             transform_y=True, dataset=dataset, move_mean=move_mean)
     ]
 
@@ -83,10 +83,10 @@ def load_sampl(featurizer='ECFP',
     return SAMPL_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'scaffold': deepchem.splits.ScaffoldSplitter(),
-      'stratified': deepchem.splits.SingletaskStratifiedSplitter(task_number=0)
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
+      'stratified': moleculenet.splitters.SingletaskStratifiedSplitter(task_number=0)
   }
 
   splitter = splitters[split]
@@ -103,7 +103,7 @@ def load_sampl(featurizer='ECFP',
   train, valid, test = splitter.train_valid_test_split(dataset)
 
   transformers = [
-      deepchem.trans.NormalizationTransformer(
+      moleculenet.transformers.NormalizationTransformer(
           transform_y=True, dataset=train, move_mean=move_mean)
   ]
 
@@ -114,6 +114,6 @@ def load_sampl(featurizer='ECFP',
     test = transformer.transform(test)
 
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                              transformers)
   return SAMPL_tasks, (train, valid, test), transformers

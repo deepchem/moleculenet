@@ -2,12 +2,12 @@
 qm8 dataset loader.
 """
 import os
-import deepchem
+import moleculenet 
 import logging
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = deepchem.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 GDB8_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/gdb8.tar.gz'
 QM8_CSV_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/qm8.csv'
 
@@ -42,7 +42,7 @@ def load_qm8(featurizer='CoulombMatrix',
       save_folder = os.path.join(save_folder, img_spec)
     save_folder = os.path.join(save_folder, str(split))
 
-    loaded, all_dataset, transformers = deepchem.utils.save.load_dataset_from_disk(
+    loaded, all_dataset, transformers = moleculenet.utils.load_dataset_from_disk(
         save_folder)
     if loaded:
       return qm8_tasks, all_dataset, transformers
@@ -50,42 +50,42 @@ def load_qm8(featurizer='CoulombMatrix',
   if featurizer in ['CoulombMatrix', 'BPSymmetryFunctionInput', 'MP', 'Raw']:
     dataset_file = os.path.join(data_dir, "qm8.sdf")
     if not os.path.exists(dataset_file):
-      deepchem.utils.download_url(url=GDB8_URL, dest_dir=data_dir)
-      deepchem.utils.untargz_file(
+      moleculenet.utils.download_url(url=GDB8_URL, dest_dir=data_dir)
+      moleculenet.utils.untargz_file(
           os.path.join(data_dir, 'gdb8.tar.gz'), data_dir)
   else:
     dataset_file = os.path.join(data_dir, "qm8.csv")
     if not os.path.exists(dataset_file):
-      deepchem.utils.download_url(url=QM8_CSV_URL, dest_dir=data_dir)
+      moleculenet.utils.download_url(url=QM8_CSV_URL, dest_dir=data_dir)
 
   if featurizer in ['CoulombMatrix', 'BPSymmetryFunctionInput', 'MP', 'Raw']:
     if featurizer == 'CoulombMatrix':
-      featurizer = deepchem.feat.CoulombMatrix(26)
+      featurizer = moleculenet.featurizers.CoulombMatrix(26)
     elif featurizer == 'BPSymmetryFunctionInput':
-      featurizer = deepchem.feat.BPSymmetryFunctionInput(26)
+      featurizer = moleculenet.featurizers.BPSymmetryFunctionInput(26)
     elif featurizer == 'Raw':
-      featurizer = deepchem.feat.RawFeaturizer()
+      featurizer = moleculenet.featurizers.RawFeaturizer()
     elif featurizer == 'MP':
-      featurizer = deepchem.feat.WeaveFeaturizer(
+      featurizer = moleculenet.featurizers.WeaveFeaturizer(
           graph_distance=False, explicit_H=True)
-    loader = deepchem.data.SDFLoader(
+    loader = moleculenet.data.SDFLoader(
         tasks=qm8_tasks,
         smiles_field="smiles",
         mol_field="mol",
         featurizer=featurizer)
   else:
     if featurizer == 'ECFP':
-      featurizer = deepchem.feat.CircularFingerprint(size=1024)
+      featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
     elif featurizer == 'GraphConv':
-      featurizer = deepchem.feat.ConvMolFeaturizer()
+      featurizer = moleculenet.featurizers.ConvMolFeaturizer()
     elif featurizer == 'Weave':
-      featurizer = deepchem.feat.WeaveFeaturizer()
+      featurizer = moleculenet.featurizers.WeaveFeaturizer()
     elif featurizer == "smiles2img":
       img_spec = kwargs.get("img_spec", "std")
       img_size = kwargs.get("img_size", 80)
-      featurizer = deepchem.feat.SmilesToImage(
+      featurizer = moleculenet.featurizers.SmilesToImage(
           img_size=img_size, img_spec=img_spec)
-    loader = deepchem.data.CSVLoader(
+    loader = moleculenet.data.CSVLoader(
         tasks=qm8_tasks, smiles_field="smiles", featurizer=featurizer)
   dataset = loader.featurize(dataset_file)
 
@@ -93,9 +93,9 @@ def load_qm8(featurizer='CoulombMatrix',
     raise ValueError()
 
   splitters = {
-      'index': deepchem.splits.IndexSplitter(),
-      'random': deepchem.splits.RandomSplitter(),
-      'stratified': deepchem.splits.SingletaskStratifiedSplitter(task_number=0)
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'stratified': moleculenet.splitters.SingletaskStratifiedSplitter(task_number=0)
   }
   splitter = splitters[split]
   frac_train = kwargs.get("frac_train", 0.8)
@@ -108,7 +108,7 @@ def load_qm8(featurizer='CoulombMatrix',
       frac_valid=frac_valid,
       frac_test=frac_test)
   transformers = [
-      deepchem.trans.NormalizationTransformer(
+      moleculenet.transformers.NormalizationTransformer(
           transform_y=True, dataset=train_dataset, move_mean=move_mean)
   ]
   for transformer in transformers:
@@ -116,6 +116,6 @@ def load_qm8(featurizer='CoulombMatrix',
     valid_dataset = transformer.transform(valid_dataset)
     test_dataset = transformer.transform(test_dataset)
   if reload:
-    deepchem.utils.save.save_dataset_to_disk(
+    moleculenet.utils.save_dataset_to_disk(
         save_folder, train_dataset, valid_dataset, test_dataset, transformers)
   return qm8_tasks, (train_dataset, valid_dataset, test_dataset), transformers
