@@ -13,8 +13,8 @@ import sys
 from moleculenet.utils import log
 from moleculenet.utils import load_csv_files
 from moleculenet.utils import load_sdf_files
-from moleculenet.utils.genomics import encode_fasta_sequence
-from moleculenet.feat import UserDefinedFeaturizer
+from moleculenet.utils import encode_fasta_sequence
+from moleculenet.featurizers import UserDefinedFeaturizer
 from moleculenet.data import DiskDataset, NumpyDataset, ImageDataset
 import zipfile
 from PIL import Image

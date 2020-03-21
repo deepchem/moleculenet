@@ -4,7 +4,7 @@ bace dataset loader.
 import os
 import logging
 import moleculenet 
-from moleuculenet.load_function.bace_features import bace_user_specified_features
+from moleculenet.load_function.bace_features import bace_user_specified_features
 
 logger = logging.getLogger(__name__)
 

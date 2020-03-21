@@ -10,7 +10,7 @@ from moleculenet.utils import pad_array
 from moleculenet.rdkit_util import load_molecule
 from moleculenet.rdkit_util import merge_molecules
 from moleculenet.rdkit_util import merge_molecules_xyz
-from moleculenet.rdkit_util import ket_xyz_from_mol
+from moleculenet.rdkit_util import get_xyz_from_mol
 from moleculenet.rdkit_util import MoleculeLoadException
 
 

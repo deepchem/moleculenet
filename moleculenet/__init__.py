@@ -1,3 +1,13 @@
+"""
+Imports all submodules
+"""
+__version__ = '0.0.1'
+
+import moleculenet.utils
+import moleculenet.data
+import moleculenet.splitters
+import moleculenet.transformers
+
 from moleculenet.load_function.bace_datasets import load_bace_classification, load_bace_regression
 from moleculenet.load_function.bbbc_datasets import load_bbbc001, load_bbbc002
 from moleculenet.load_function.bbbp_datasets import load_bbbp
