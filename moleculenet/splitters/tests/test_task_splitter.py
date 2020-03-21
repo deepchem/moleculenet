@@ -8,7 +8,7 @@ __license__ = "MIT"
 import unittest
 import tempfile
 import numpy as np
-import deepchem as dc
+import moleculenet
 
 
 class TestTaskSplitters(unittest.TestCase):
@@ -26,9 +26,9 @@ class TestTaskSplitters(unittest.TestCase):
     X = np.random.rand(n_samples, n_features)
     p = .05  # proportion actives
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
 
-    task_splitter = dc.splits.TaskSplitter()
+    task_splitter = moleculenet.splits.TaskSplitter()
     train, valid, test = task_splitter.train_valid_test_split(
         dataset, frac_train=.4, frac_valid=.3, frac_test=.3)
 
@@ -46,10 +46,10 @@ class TestTaskSplitters(unittest.TestCase):
     X = np.random.rand(n_samples, n_features)
     p = .05  # proportion actives
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
     K = 5
 
-    task_splitter = dc.splits.TaskSplitter()
+    task_splitter = moleculenet.splits.TaskSplitter()
     fold_datasets = task_splitter.k_fold_split(dataset, K)
 
     for fold_dataset in fold_datasets:
@@ -65,9 +65,9 @@ class TestTaskSplitters(unittest.TestCase):
     X = np.random.rand(n_samples, n_features)
     p = .05  # proportion actives
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
     K = 4
-    task_splitter = dc.splits.TaskSplitter()
+    task_splitter = moleculenet.splitters.TaskSplitter()
     fold_datasets = task_splitter.k_fold_split(dataset, K)
 
     for fold in range(K - 1):
@@ -85,9 +85,9 @@ class TestTaskSplitters(unittest.TestCase):
     X = np.random.rand(n_samples, n_features)
     p = .05  # proportion actives
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
 
-    task_splitter = dc.splits.TaskSplitter()
+    task_splitter = moleculenet.splitters.TaskSplitter()
     train, valid, test = task_splitter.train_valid_test_split(
         dataset, frac_train=.4, frac_valid=.3, frac_test=.3)
 
@@ -107,10 +107,10 @@ class TestTaskSplitters(unittest.TestCase):
     p = .05  # proportion actives
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
     w = np.ones((n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y, w)
+    dataset = moleculenet.data.NumpyDataset(X, y, w)
     K = 5
 
-    task_splitter = dc.splits.TaskSplitter()
+    task_splitter = moleculenet.splitters.TaskSplitter()
     fold_datasets = task_splitter.k_fold_split(dataset, K)
     # Number tasks per fold
     n_per_fold = 2
@@ -118,7 +118,7 @@ class TestTaskSplitters(unittest.TestCase):
     for fold in range(K):
       train_inds = list(set(range(K)) - set([fold]))
       train_fold_datasets = [fold_datasets[ind] for ind in train_inds]
-      train_dataset = dc.splits.merge_fold_datasets(train_fold_datasets)
+      train_dataset = moleculenet.splitters.merge_fold_datasets(train_fold_datasets)
 
       # Find the tasks that correspond to this test fold
       train_tasks = list(

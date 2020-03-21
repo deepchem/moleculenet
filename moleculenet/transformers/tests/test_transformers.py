@@ -1,15 +1,15 @@
 """
 Tests for transformer objects.
 """
-from deepchem.molnet import load_delaney
-from deepchem.trans.transformers import FeaturizationTransformer
-from deepchem.trans.transformers import DataTransforms
+import moleculenet
+from moleculenet import load_delaney
+from moleculenet.transformers import FeaturizationTransformer
+from moleuclenet.transformers import DataTransforms
 
 import os
 import unittest
 import numpy as np
 import pandas as pd
-import deepchem as dc
 import tensorflow as tf
 import scipy.ndimage
 from PIL import Image
@@ -27,7 +27,7 @@ class TestTransformers(unittest.TestCase):
        init to load the MNIST data for DataTransforms Tests
       '''
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    train = dc.data.NumpyDataset(x_train, y_train)
+    train = moleculenet.data.NumpyDataset(x_train, y_train)
     # extract only the images (no need of the labels)
     data = (train.X)[0]
     # reshaping the vector to image
@@ -36,8 +36,8 @@ class TestTransformers(unittest.TestCase):
 
   def test_y_log_transformer(self):
     """Tests logarithmic data transformer."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    log_transformer = dc.trans.LogTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    log_transformer = moleculenet.transformers.LogTransformer(
         transform_y=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -59,23 +59,23 @@ class TestTransformers(unittest.TestCase):
     np.testing.assert_allclose(log_transformer.untransform(y_t), y)
 
   def test_transform_unlabelled(self):
-    ul_dataset = dc.data.tests.load_unlabelled_data()
+    ul_dataset = moleculenet.data.tests.load_unlabelled_data()
     # transforming y should raise an exception
     with self.assertRaises(ValueError) as context:
-      dc.trans.transformers.Transformer(transform_y=True).transform(ul_dataset)
+      moleculenet.transformers.Transformer(transform_y=True).transform(ul_dataset)
 
     # transforming w should raise an exception
     with self.assertRaises(ValueError) as context:
-      dc.trans.transformers.Transformer(transform_w=True).transform(ul_dataset)
+      moleculenet.transformers.Transformer(transform_w=True).transform(ul_dataset)
 
     # transforming X should be okay
-    dc.trans.NormalizationTransformer(
+    moleculenet.transformers.NormalizationTransformer(
         transform_X=True, dataset=ul_dataset).transform(ul_dataset)
 
   def test_X_log_transformer(self):
     """Tests logarithmic data transformer."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    log_transformer = dc.trans.LogTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    log_transformer = moleculenet.transformers.LogTransformer(
         transform_X=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -98,7 +98,7 @@ class TestTransformers(unittest.TestCase):
 
   def test_y_log_transformer_select(self):
     """Tests logarithmic data transformer with selection."""
-    multitask_dataset = dc.data.tests.load_feat_multitask_data()
+    multitask_dataset = moleculenet.data.tests.load_feat_multitask_data()
     dfe = pd.read_csv(
         os.path.join(self.current_dir,
                      "../../models/tests/feat_multitask_example.csv"))
@@ -109,7 +109,7 @@ class TestTransformers(unittest.TestCase):
       tiid = dfe.columns.get_loc(task) - dfe.columns.get_loc(first_task)
       tid = np.concatenate((tid, np.array([tiid])))
     tasks = tid.astype(int)
-    log_transformer = dc.trans.LogTransformer(
+    log_transformer = moleculenet.transformers.LogTransformer(
         transform_y=True, tasks=tasks, dataset=multitask_dataset)
     X, y, w, ids = (multitask_dataset.X, multitask_dataset.y,
                     multitask_dataset.w, multitask_dataset.ids)
@@ -132,7 +132,7 @@ class TestTransformers(unittest.TestCase):
 
   def test_X_log_transformer_select(self):
     # Tests logarithmic data transformer with selection.
-    multitask_dataset = dc.data.tests.load_feat_multitask_data()
+    multitask_dataset = moleculenet.data.tests.load_feat_multitask_data()
     dfe = pd.read_csv(
         os.path.join(self.current_dir,
                      "../../models/tests/feat_multitask_example.csv"))
@@ -143,7 +143,7 @@ class TestTransformers(unittest.TestCase):
       fiid = dfe.columns.get_loc(feature) - dfe.columns.get_loc(first_feature)
       fid = np.concatenate((fid, np.array([fiid])))
     features = fid.astype(int)
-    log_transformer = dc.trans.LogTransformer(
+    log_transformer = moleculenet.transformers.LogTransformer(
         transform_X=True, features=features, dataset=multitask_dataset)
     X, y, w, ids = (multitask_dataset.X, multitask_dataset.y,
                     multitask_dataset.w, multitask_dataset.ids)
@@ -166,8 +166,8 @@ class TestTransformers(unittest.TestCase):
 
   def test_y_minmax_transformer(self):
     """Tests MinMax transformer. """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    minmax_transformer = dc.trans.MinMaxTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    minmax_transformer = moleculenet.trans.MinMaxTransformer(
         transform_y=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -198,9 +198,9 @@ class TestTransformers(unittest.TestCase):
 
     X = np.random.randn(n_samples, n_features)
     y = np.random.randn(n_samples, n_tasks)
-    dataset = dc.data.NumpyDataset(X, y)
+    dataset = moleculenet.data.NumpyDataset(X, y)
 
-    minmax_transformer = dc.trans.MinMaxTransformer(
+    minmax_transformer = moleculenet.trans.MinMaxTransformer(
         transform_y=True, dataset=dataset)
     w, ids = dataset.w, dataset.ids
 
@@ -226,8 +226,8 @@ class TestTransformers(unittest.TestCase):
     np.testing.assert_allclose(np.squeeze(y_restored, axis=-1), y)
 
   def test_X_minmax_transformer(self):
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    minmax_transformer = dc.trans.MinMaxTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    minmax_transformer = moleculenet.transformers.MinMaxTransformer(
         transform_X=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -253,8 +253,8 @@ class TestTransformers(unittest.TestCase):
 
   def test_y_normalization_transformer(self):
     """Tests normalization transformer."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    normalization_transformer = dc.trans.NormalizationTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    normalization_transformer = moleculenet.transformers.NormalizationTransformer(
         transform_y=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -277,8 +277,8 @@ class TestTransformers(unittest.TestCase):
 
   def test_X_normalization_transformer(self):
     """Tests normalization transformer."""
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    normalization_transformer = dc.trans.NormalizationTransformer(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    normalization_transformer = moleculenet.transformers.NormalizationTransformer(
         transform_X=True, dataset=solubility_dataset)
     X, y, w, ids = (solubility_dataset.X, solubility_dataset.y,
                     solubility_dataset.w, solubility_dataset.ids)
@@ -312,9 +312,9 @@ class TestTransformers(unittest.TestCase):
     """Test CDF transformer on Gaussian normal dataset."""
     target = np.array(np.transpose(np.linspace(0., 1., 1001)))
     target = np.transpose(np.array(np.append([target], [target], axis=0)))
-    gaussian_dataset = dc.data.tests.load_gaussian_cdf_data()
+    gaussian_dataset = moleculenet.data.tests.load_gaussian_cdf_data()
     bins = 1001
-    cdf_transformer = dc.trans.CDFTransformer(
+    cdf_transformer = moleculenet.transformers.CDFTransformer(
         transform_X=True, dataset=gaussian_dataset, bins=bins)
     X, y, w, ids = (gaussian_dataset.X, gaussian_dataset.y, gaussian_dataset.w,
                     gaussian_dataset.ids)
@@ -337,9 +337,9 @@ class TestTransformers(unittest.TestCase):
     # Test CDF transformer on Gaussian normal dataset.
     target = np.array(np.transpose(np.linspace(0., 1., 1001)))
     target = np.transpose(np.array(np.append([target], [target], axis=0)))
-    gaussian_dataset = dc.data.tests.load_gaussian_cdf_data()
+    gaussian_dataset = moleculenet.data.tests.load_gaussian_cdf_data()
     bins = 1001
-    cdf_transformer = dc.trans.CDFTransformer(
+    cdf_transformer = moleculenet.transformers.CDFTransformer(
         transform_y=True, dataset=gaussian_dataset, bins=bins)
     X, y, w, ids = (gaussian_dataset.X, gaussian_dataset.y, gaussian_dataset.w,
                     gaussian_dataset.ids)
@@ -372,8 +372,8 @@ class TestTransformers(unittest.TestCase):
     X *= 6.
     y = np.zeros((n_samples, n_tasks))
     w = np.ones((n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
-    transformer = dc.trans.ClippingTransformer(transform_X=True, x_max=5.)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
+    transformer = moleculenet.transformers.ClippingTransformer(transform_X=True, x_max=5.)
     clipped_dataset = transformer.transform(dataset)
     X_t, y_t, w_t, ids_t = (clipped_dataset.X, clipped_dataset.y,
                             clipped_dataset.w, clipped_dataset.ids)
@@ -398,8 +398,8 @@ class TestTransformers(unittest.TestCase):
     target = 5. * y
     y *= 6.
     w = np.ones((n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
-    transformer = dc.trans.ClippingTransformer(transform_y=True, y_max=5.)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
+    transformer = moleculenet.transformers.ClippingTransformer(transform_y=True, y_max=5.)
     clipped_dataset = transformer.transform(dataset)
     X_t, y_t, w_t, ids_t = (clipped_dataset.X, clipped_dataset.y,
                             clipped_dataset.w, clipped_dataset.ids)
@@ -415,9 +415,9 @@ class TestTransformers(unittest.TestCase):
 
   def test_power_X_transformer(self):
     """Test Power transformer on Gaussian normal dataset."""
-    gaussian_dataset = dc.data.tests.load_gaussian_cdf_data()
+    gaussian_dataset = moleculenet.data.tests.load_gaussian_cdf_data()
     powers = [1, 2, 0.5]
-    power_transformer = dc.trans.PowerTransformer(
+    power_transformer = moleculenet.transformers.PowerTransformer(
         transform_X=True, powers=powers)
     X, y, w, ids = (gaussian_dataset.X, gaussian_dataset.y, gaussian_dataset.w,
                     gaussian_dataset.ids)
@@ -440,9 +440,9 @@ class TestTransformers(unittest.TestCase):
 
   def test_power_y_transformer(self):
     """Test Power transformer on Gaussian normal dataset."""
-    gaussian_dataset = dc.data.tests.load_gaussian_cdf_data()
+    gaussian_dataset = moleculenet.data.tests.load_gaussian_cdf_data()
     powers = [1, 2, 0.5]
-    power_transformer = dc.trans.PowerTransformer(
+    power_transformer = moleculenet.transformers.PowerTransformer(
         transform_y=True, powers=powers)
     X, y, w, ids = (gaussian_dataset.X, gaussian_dataset.y, gaussian_dataset.w,
                     gaussian_dataset.ids)
@@ -469,8 +469,8 @@ class TestTransformers(unittest.TestCase):
   def test_singletask_balancing_transformer(self):
     """Test balancing transformer on single-task dataset."""
 
-    classification_dataset = dc.data.tests.load_classification_data()
-    balancing_transformer = dc.trans.BalancingTransformer(
+    classification_dataset = moleculenet.data.tests.load_classification_data()
+    balancing_transformer = moleculenet.transformers.BalancingTransformer(
         transform_w=True, dataset=classification_dataset)
     X, y, w, ids = (classification_dataset.X, classification_dataset.y,
                     classification_dataset.w, classification_dataset.ids)
@@ -499,8 +499,8 @@ class TestTransformers(unittest.TestCase):
 
   def test_multitask_balancing_transformer(self):
     """Test balancing transformer on multitask dataset."""
-    multitask_dataset = dc.data.tests.load_multitask_data()
-    balancing_transformer = dc.trans.BalancingTransformer(
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
+    balancing_transformer = moleculenet.transformers.BalancingTransformer(
         transform_w=True, dataset=multitask_dataset)
     X, y, w, ids = (multitask_dataset.X, multitask_dataset.y,
                     multitask_dataset.w, multitask_dataset.ids)
@@ -534,8 +534,8 @@ class TestTransformers(unittest.TestCase):
     X = np.random.rand(n_samples, n_features, n_features)
     y = np.zeros((n_samples, n_tasks))
     w = np.ones((n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y, w, ids)
-    fit_transformer = dc.trans.CoulombFitTransformer(dataset)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids)
+    fit_transformer = moleculenet.transformers.CoulombFitTransformer(dataset)
     X_t = fit_transformer.X_transform(dataset.X)
     assert len(X_t.shape) == 2
 
@@ -547,16 +547,16 @@ class TestTransformers(unittest.TestCase):
     X = np.random.randint(2, size=(n_samples, n_features))
     y = np.zeros((n_samples, n_tasks))
     w = np.ones((n_samples, n_tasks))
-    dataset = dc.data.NumpyDataset(X, y, w, ids=None)
+    dataset = moleculenet.data.NumpyDataset(X, y, w, ids=None)
     X_test = np.random.randint(2, size=(test_samples, n_features))
     y_test = np.zeros((test_samples, n_tasks))
     w_test = np.ones((test_samples, n_tasks))
-    test_dataset = dc.data.NumpyDataset(X_test, y_test, w_test, ids=None)
+    test_dataset = moleculenet.data.NumpyDataset(X_test, y_test, w_test, ids=None)
     sims = np.sum(
         X_test[0, :] * X, axis=1, dtype=float) / np.sum(
             np.sign(X_test[0, :] + X), axis=1, dtype=float)
     sims = sorted(sims, reverse=True)
-    IRV_transformer = dc.trans.IRVTransformer(10, n_tasks, dataset)
+    IRV_transformer = moleculenet.transformers.IRVTransformer(10, n_tasks, dataset)
     test_dataset_trans = IRV_transformer.transform(test_dataset)
     dataset_trans = IRV_transformer.transform(dataset)
     assert test_dataset_trans.X.shape == (test_samples, 20 * n_tasks)
@@ -571,7 +571,7 @@ class TestTransformers(unittest.TestCase):
     transformer = FeaturizationTransformer(
         transform_X=True,
         dataset=train,
-        featurizer=dc.feat.CircularFingerprint(size=fp_size))
+        featurizer=moleculenet.featurizers.CircularFingerprint(size=fp_size))
     new_train = transformer.transform(train)
 
     self.assertEqual(new_train.y.shape, train.y.shape)

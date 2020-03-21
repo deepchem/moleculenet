@@ -12,12 +12,11 @@ import numpy as np
 import pandas as pd
 import itertools
 import os
-import deepchem as dc
-from deepchem.data import DiskDataset
-from deepchem.utils import ScaffoldGenerator
-from deepchem.utils.save import log
-from deepchem.data import NumpyDataset
-from deepchem.utils.save import load_data
+from moleculenet.data import DiskDataset
+from moleculenet.utils import ScaffoldGenerator
+from moleculenet.utils import log
+from moleculenet.utils import load_data
+from moleculenet.data import NumpyDataset
 
 
 def generate_scaffold(smiles, include_chirality=False):
@@ -463,7 +462,7 @@ class SingletaskStratifiedSplitter(Splitter):
 
         Parameters
         ----------
-        dataset: dc.data.Dataset object
+        dataset: moleculenet.data.Dataset object
           Dataset.
         k: int
           Number of folds.
@@ -475,7 +474,7 @@ class SingletaskStratifiedSplitter(Splitter):
         Returns
         -------
         fold_datasets: List
-          List containing dc.data.Dataset objects
+          List containing moleculenet.data.Dataset objects
         """
     log("Computing K-fold split", self.verbose)
     if directories is None:
@@ -507,7 +506,7 @@ class SingletaskStratifiedSplitter(Splitter):
 
         Parameters
         ----------
-        dataset: dc.data.Dataset object
+        dataset: moleculenet.data.Dataset object
           Dataset.
         seed: int (Optional, Default None)
           Random seed.
@@ -1072,7 +1071,7 @@ class TimeSplitterPDBbind(Splitter):
         data_dir = os.environ['DEEPCHEM_DATA_DIR']
         self.year_file = os.path.join(data_dir, 'pdbbind_year.csv')
         if not os.path.exists(self.year_file):
-          dc.utils.download_url(
+          moleculenet.utils.download_url(
               'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/pdbbind_year.csv',
               dest_dir=data_dir)
       except:

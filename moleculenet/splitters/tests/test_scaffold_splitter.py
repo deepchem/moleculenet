@@ -2,15 +2,14 @@ import unittest
 from unittest import TestCase
 
 import numpy as np
-import deepchem as dc
-from deepchem.splits.splitters import ScaffoldSplitter
+from moleculenet.splitters.splitters import ScaffoldSplitter
 
 
 class TestScaffoldSplitter(TestCase):
 
   def test_scaffolds(self):
     tox21_tasks, tox21_datasets, transformers = \
-      dc.molnet.load_tox21(featurizer='GraphConv')
+      moleculenet.load_tox21(featurizer='GraphConv')
     train_dataset, valid_dataset, test_dataset = tox21_datasets
 
     splitter = ScaffoldSplitter()

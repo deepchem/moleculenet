@@ -1,17 +1,11 @@
 """
 Tests for splitter objects.
 """
-__author__ = "Bharath Ramsundar, Aneesh Pappu"
-__copyright__ = "Copyright 2016, Stanford University"
-__license__ = "MIT"
-
 import tempfile
 import unittest
 import numpy as np
-import deepchem as dc
-from deepchem.data import NumpyDataset
-from deepchem.splits import IndexSplitter
-
+from moleculenet.data import NumpyDataset
+from moleculenet.splitters import IndexSplitter
 
 class TestSplitter(unittest.TestCase):
   """
@@ -19,12 +13,12 @@ class TestSplitter(unittest.TestCase):
   """
 
   def test_random_group_split(self):
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
 
     groups = [0, 4, 1, 2, 3, 7, 0, 3, 1, 0]
     # 0 1 2 3 4 5 6 7 8 9
 
-    group_splitter = dc.splits.RandomGroupSplitter(groups)
+    group_splitter = moleculenet.splits.RandomGroupSplitter(groups)
 
     train_idxs, valid_idxs, test_idxs = group_splitter.split(
         solubility_dataset, frac_train=0.5, frac_valid=0.25, frac_test=0.25)
@@ -48,8 +42,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask RandomSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    random_splitter = dc.splits.RandomSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    random_splitter = moleculenet.splits.RandomSplitter()
     train_data, valid_data, test_data = \
       random_splitter.train_valid_test_split(
         solubility_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -57,7 +51,7 @@ class TestSplitter(unittest.TestCase):
     assert len(valid_data) == 1
     assert len(test_data) == 1
 
-    merged_dataset = dc.data.DiskDataset.merge(
+    merged_dataset = moleculenet.data.DiskDataset.merge(
         [train_data, valid_data, test_data])
     assert sorted(merged_dataset.ids) == (sorted(solubility_dataset.ids))
 
@@ -65,8 +59,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask IndexSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    random_splitter = dc.splits.IndexSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    random_splitter = moleculenet.splitters.IndexSplitter()
     train_data, valid_data, test_data = \
       random_splitter.train_valid_test_split(
         solubility_dataset)
@@ -74,7 +68,7 @@ class TestSplitter(unittest.TestCase):
     assert len(valid_data) == 1
     assert len(test_data) == 1
 
-    merged_dataset = dc.data.DiskDataset.merge(
+    merged_dataset = moleculenet.data.DiskDataset.merge(
         [train_data, valid_data, test_data])
     assert sorted(merged_dataset.ids) == (sorted(solubility_dataset.ids))
 
@@ -86,8 +80,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask ScaffoldSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    scaffold_splitter = dc.splits.ScaffoldSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    scaffold_splitter = moleculenet.splitters.ScaffoldSplitter()
     train_data, valid_data, test_data = \
       scaffold_splitter.train_valid_test_split(
         solubility_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -99,9 +93,9 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask Fingerprint class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
     assert (len(solubility_dataset.X) == 10)
-    scaffold_splitter = dc.splits.FingerprintSplitter()
+    scaffold_splitter = moleculenet.splitters.FingerprintSplitter()
     train_data, valid_data, test_data = \
       scaffold_splitter.train_valid_test_split(
         solubility_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -116,8 +110,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask SingletaskStratifiedSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    stratified_splitter = dc.splits.ScaffoldSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    stratified_splitter = moleculenet.splitters.ScaffoldSplitter()
     train_data, valid_data, test_data = \
       stratified_splitter.train_valid_test_split(
         solubility_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -125,7 +119,7 @@ class TestSplitter(unittest.TestCase):
     assert len(valid_data) == 1
     assert len(test_data) == 1
 
-    merged_dataset = dc.data.NumpyDataset.merge(
+    merged_dataset = moleculenet.data.NumpyDataset.merge(
         [train_data, valid_data, test_data])
     assert sorted(merged_dataset.ids) == (sorted(solubility_dataset.ids))
 
@@ -133,8 +127,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask MaxMinSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_butina_data()
-    maxmin_splitter = dc.splits.MaxMinSplitter()
+    solubility_dataset = moleculenet.data.tests.load_butina_data()
+    maxmin_splitter = moleculenet.splits.MaxMinSplitter()
     train_data, valid_data, test_data = \
       maxmin_splitter.train_valid_test_split(
         solubility_dataset)
@@ -146,8 +140,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask ButinaSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_butina_data()
-    butina_splitter = dc.splits.ButinaSplitter()
+    solubility_dataset = moleculenet.data.tests.load_butina_data()
+    butina_splitter = moleculenet.splitters.ButinaSplitter()
     train_data, valid_data, test_data = \
       butina_splitter.train_valid_test_split(
         solubility_dataset)
@@ -177,8 +171,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask RandomSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    random_splitter = dc.splits.RandomSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    random_splitter = moleculenet.splitters.RandomSplitter()
     ids_set = set(solubility_dataset.ids)
 
     K = 5
@@ -202,8 +196,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask IndexSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    index_splitter = dc.splits.IndexSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    index_splitter = moleculenet.splitters.IndexSplitter()
     ids_set = set(solubility_dataset.ids)
 
     K = 5
@@ -224,7 +218,7 @@ class TestSplitter(unittest.TestCase):
         other_fold_ids_set = set(other_fold_dataset.ids)
         assert fold_ids_set.isdisjoint(other_fold_ids_set)
 
-    merged_dataset = dc.data.DiskDataset.merge([x[1] for x in fold_datasets])
+    merged_dataset = moleculenet.data.DiskDataset.merge([x[1] for x in fold_datasets])
     assert len(merged_dataset) == len(solubility_dataset)
     assert sorted(merged_dataset.ids) == (sorted(solubility_dataset.ids))
 
@@ -232,8 +226,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test singletask ScaffoldSplitter class.
     """
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    scaffold_splitter = dc.splits.ScaffoldSplitter()
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    scaffold_splitter = moleculenet.splitters.ScaffoldSplitter()
     ids_set = set(solubility_dataset.ids)
 
     K = 5
@@ -254,7 +248,7 @@ class TestSplitter(unittest.TestCase):
         other_fold_ids_set = set(other_fold_dataset.ids)
         assert fold_ids_set.isdisjoint(other_fold_ids_set)
 
-    merged_dataset = dc.data.DiskDataset.merge([x[1] for x in fold_datasets])
+    merged_dataset = moleculenet.data.DiskDataset.merge([x[1] for x in fold_datasets])
     assert len(merged_dataset) == len(solubility_dataset)
     assert sorted(merged_dataset.ids) == (sorted(solubility_dataset.ids))
 
@@ -273,7 +267,7 @@ class TestSplitter(unittest.TestCase):
     y[:n_positives] = 1
     w = np.ones((n_samples, n_tasks))
     ids = np.arange(n_samples)
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splits.RandomStratifiedSplitter()
     column_indices = stratified_splitter.get_task_split_indices(
         y, w, frac_split=.5)
 
@@ -300,7 +294,7 @@ class TestSplitter(unittest.TestCase):
     w[:n_positives // 2] = 0
     ids = np.arange(n_samples)
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     column_indices = stratified_splitter.get_task_split_indices(
         y, w, frac_split=.5)
 
@@ -323,7 +317,7 @@ class TestSplitter(unittest.TestCase):
     y = np.random.binomial(1, p, size=(n_samples, n_tasks))
     w = np.ones((n_samples, n_tasks))
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     split_indices = stratified_splitter.get_task_split_indices(
         y, w, frac_split=.5)
 
@@ -347,7 +341,7 @@ class TestSplitter(unittest.TestCase):
     # Mask half the examples
     w[:n_samples // 2] = 0
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     split_indices = stratified_splitter.get_task_split_indices(
         y, w, frac_split=.5)
 
@@ -376,9 +370,9 @@ class TestSplitter(unittest.TestCase):
     y[:n_positives] = 1
     w = np.ones((n_samples, n_tasks))
     ids = np.arange(n_samples)
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     dataset_1, dataset_2 = stratified_splitter.split(dataset, frac_split=.5)
 
     # Should have split cleanly in half (picked random seed to ensure this)
@@ -408,9 +402,9 @@ class TestSplitter(unittest.TestCase):
     y[:n_positives] = 1
     w = np.ones((n_samples, n_tasks))
     ids = np.arange(n_samples)
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splits.RandomStratifiedSplitter()
     train, valid, test = stratified_splitter.train_valid_test_split(
         dataset, frac_train=.8, frac_valid=.1, frac_test=.1)
 
@@ -434,9 +428,9 @@ class TestSplitter(unittest.TestCase):
     w = np.ones(n_samples)
     ids = np.arange(n_samples)
 
-    dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
+    dataset = moleculenet.data.DiskDataset.from_numpy(X, y, w, ids)
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     ids_set = set(dataset.ids)
 
     K = 5
@@ -461,7 +455,7 @@ class TestSplitter(unittest.TestCase):
         other_fold_ids_set = set(other_fold_dataset.ids)
         assert fold_ids_set.isdisjoint(other_fold_ids_set)
 
-    merged_dataset = dc.data.DiskDataset.merge(fold_datasets)
+    merged_dataset = moleculenet.data.DiskDataset.merge(fold_datasets)
     assert len(merged_dataset) == len(dataset)
     assert sorted(merged_dataset.ids) == (sorted(dataset.ids))
 
@@ -469,8 +463,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test multitask RandomSplitter class.
     """
-    multitask_dataset = dc.data.tests.load_multitask_data()
-    random_splitter = dc.splits.RandomSplitter()
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
+    random_splitter = moleculenet.splitters.RandomSplitter()
     train_data, valid_data, test_data = \
       random_splitter.train_valid_test_split(
         multitask_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -482,8 +476,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test multitask IndexSplitter class.
     """
-    multitask_dataset = dc.data.tests.load_multitask_data()
-    index_splitter = dc.splits.IndexSplitter()
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
+    index_splitter = moleculenet.splitters.IndexSplitter()
     train_data, valid_data, test_data = \
       index_splitter.train_valid_test_split(
         multitask_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -495,8 +489,8 @@ class TestSplitter(unittest.TestCase):
     """
     Test multitask ScaffoldSplitter class.
     """
-    multitask_dataset = dc.data.tests.load_multitask_data()
-    scaffold_splitter = dc.splits.ScaffoldSplitter()
+    multitask_dataset = moleculenet.data.tests.load_multitask_data()
+    scaffold_splitter = moleculenet.splitters.ScaffoldSplitter()
     train_data, valid_data, test_data = \
       scaffold_splitter.train_valid_test_split(
         multitask_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
@@ -511,9 +505,9 @@ class TestSplitter(unittest.TestCase):
     # sparsity is determined by number of w weights that are 0 for a given
     # task structure of w np array is such that each row corresponds to a
     # sample. The loaded sparse dataset has many rows with only zeros
-    sparse_dataset = dc.data.tests.load_sparse_multitask_dataset()
+    sparse_dataset = moleculenet.data.tests.load_sparse_multitask_dataset()
 
-    stratified_splitter = dc.splits.RandomStratifiedSplitter()
+    stratified_splitter = moleculenet.splitters.RandomStratifiedSplitter()
     datasets = stratified_splitter.train_valid_test_split(
         sparse_dataset, frac_train=0.8, frac_valid=0.1, frac_test=0.1)
     train_data, valid_data, test_data = datasets
@@ -526,8 +520,8 @@ class TestSplitter(unittest.TestCase):
 
   def test_indice_split(self):
 
-    solubility_dataset = dc.data.tests.load_solubility_data()
-    random_splitter = dc.splits.IndiceSplitter(
+    solubility_dataset = moleculenet.data.tests.load_solubility_data()
+    random_splitter = moleculenet.splitters.IndiceSplitter(
         valid_indices=[7], test_indices=[8])
     train_data, valid_data, test_data = \
       random_splitter.split(
@@ -538,8 +532,8 @@ class TestSplitter(unittest.TestCase):
 
   def test_random_seed(self):
     """Test that splitters use the random seed correctly."""
-    dataset = dc.data.tests.load_solubility_data()
-    splitter = dc.splits.RandomSplitter()
+    dataset = moleculenet.data.tests.load_solubility_data()
+    splitter = moleculenet.splitters.RandomSplitter()
     train1, valid1, test1 = splitter.train_valid_test_split(dataset, seed=1)
     train2, valid2, test2 = splitter.train_valid_test_split(dataset, seed=2)
     train3, valid3, test3 = splitter.train_valid_test_split(dataset, seed=1)
@@ -549,9 +543,3 @@ class TestSplitter(unittest.TestCase):
     assert not np.array_equal(train1.X, train2.X)
     assert not np.array_equal(valid1.X, valid2.X)
     assert not np.array_equal(test1.X, test2.X)
-
-
-if __name__ == "__main__":
-  import nose
-
-  nose.run(defaultTest=__name__)

@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-import deepchem
+import moleculenet 
 import numpy as np
 from sklearn.model_selection import train_test_split
-from deepchem.splits import SpecifiedIndexSplitter
+from moleuclenet.splitters import SpecifiedIndexSplitter
 
 
 class TestSpecifiedIndexSplitter(TestCase):
@@ -12,7 +12,7 @@ class TestSpecifiedIndexSplitter(TestCase):
     n_samples, n_features = 20, 10
     X = np.random.random(size=(n_samples, n_features))
     y = np.random.random(size=(n_samples, 1))
-    return deepchem.data.NumpyDataset(X, y)
+    return moleculenet.data.NumpyDataset(X, y)
 
   def test_split(self):
     ds = self.create_dataset()

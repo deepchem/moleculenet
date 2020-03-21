@@ -7,11 +7,11 @@ __license__ = "MIT"
 
 import tempfile
 import numpy as np
-from deepchem.utils import ScaffoldGenerator
-from deepchem.utils.save import log
-from deepchem.data import NumpyDataset
-from deepchem.utils.save import load_data
-from deepchem.splits import Splitter
+from moleculenet.utils import ScaffoldGenerator
+from moleculenet.utils import log
+from moleculenet.utils import load_data
+from moleculenet.data import NumpyDataset
+from moleculenet.splitters import Splitter
 
 
 def merge_fold_datasets(fold_datasets):
