@@ -498,12 +498,12 @@ class NumpyDataset(Dataset):
     """
     Parameters
     ----------
-    datasets: list of deepchem.data.NumpyDataset
+    datasets: list of moleculenet.data.NumpyDataset
       list of datasets to merge
 
     Returns
     -------
-    Single deepchem.data.NumpyDataset with data concatenated over axis 0
+    Single moleculenet.data.NumpyDataset with data concatenated over axis 0
     """
     X, y, w, ids = datasets[0].X, datasets[0].y, datasets[0].w, datasets[0].ids
     for dataset in datasets[1:]:

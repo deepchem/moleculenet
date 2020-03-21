@@ -10,18 +10,18 @@ import numbers
 import tempfile
 import time
 import sys
-from deepchem.utils.save import log
-from deepchem.utils.save import load_csv_files
-from deepchem.utils.save import load_sdf_files
-from deepchem.utils.genomics import encode_fasta_sequence
-from deepchem.feat import UserDefinedFeaturizer
-from deepchem.data import DiskDataset, NumpyDataset, ImageDataset
+from moleculenet.utils import log
+from moleculenet.utils import load_csv_files
+from moleculenet.utils import load_sdf_files
+from moleculenet.utils.genomics import encode_fasta_sequence
+from moleculenet.feat import UserDefinedFeaturizer
+from moleculenet.data import DiskDataset, NumpyDataset, ImageDataset
 import zipfile
 from PIL import Image
 
 
 def convert_df_to_numpy(df, tasks, verbose=False):
-  """Transforms a dataframe containing deepchem input into numpy arrays"""
+  """Transforms a dataframe containing moleculenet input into numpy arrays"""
   n_samples = df.shape[0]
   n_tasks = len(tasks)
 
