@@ -9,7 +9,7 @@ import math
 import os
 import subprocess
 import numpy as np
-import deepchem.utils.rdkit_util as rdkit_util
+import moleculenet.utils.rdkit_util as rdkit_util
 
 
 def force_partial_charge_computation(mol):

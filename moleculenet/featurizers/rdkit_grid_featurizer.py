@@ -11,14 +11,14 @@ import tempfile
 import hashlib
 import multiprocessing
 from collections import Counter
-from deepchem.utils.rdkit_util import load_molecule
-from deepchem.utils.rdkit_util import MoleculeLoadException
+from moleculenet.utils.rdkit_util import load_molecule
+from moleculenet.utils.rdkit_util import MoleculeLoadException
 
 import numpy as np
 from scipy.spatial.distance import cdist
 from copy import deepcopy
-from deepchem.feat import ComplexFeaturizer
-from deepchem.utils.save import log
+from moleculenet.featurizers import ComplexFeaturizer
+from moleculenet.utils import log
 """
 TODO(LESWING) add sanitization with rdkit upgrade to 2017.*
 """

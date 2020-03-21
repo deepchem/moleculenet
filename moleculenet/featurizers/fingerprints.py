@@ -1,11 +1,7 @@
 """
 Topological fingerprints.
 """
-__author__ = "Steven Kearnes"
-__copyright__ = "Copyright 2014, Stanford University"
-__license__ = "MIT"
-
-from deepchem.feat import Featurizer
+from moleculenet.featurizers import Featurizer
 
 
 class CircularFingerprint(Featurizer):

@@ -1,6 +1,4 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-from deepchem.feat import Featurizer
+from moleculenet.featurizers import Featurizer
 
 
 class RawFeaturizer(Featurizer):

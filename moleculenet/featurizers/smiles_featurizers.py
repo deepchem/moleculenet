@@ -3,13 +3,9 @@ Featurizer implementations used in ChemCeption and Smiles2Vec models.
 SmilesToSeq featurizer for Smiles2Vec models taken from https://arxiv.org/abs/1712.02734
 SmilesToImage featurizer for ChemCeption models taken from https://arxiv.org/abs/1710.02238
 """
-
-__author__ = "Vignesh Ram Somnath"
-__license__ = "MIT"
-
 import numpy as np
 import pandas as pd
-from deepchem.feat import Featurizer
+from moleculenet.featurizers import Featurizer
 
 PAD_TOKEN = "<pad>"
 OUT_OF_VOCAB_TOKEN = "<unk>"

@@ -3,15 +3,11 @@ Generate coulomb matrices for molecules.
 
 See Montavon et al., _New Journal of Physics_ __15__ (2013) 095003.
 """
-__author__ = "Steven Kearnes"
-__copyright__ = "Copyright 2014, Stanford University"
-__license__ = "MIT"
-
 import numpy as np
-import deepchem as dc
-from deepchem.feat import Featurizer
-from deepchem.utils import pad_array
-from deepchem.feat.atomic_coordinates import AtomicCoordinates
+import moleculenet
+from moleculenet.featurizers import Featurizer
+from moleculenet.utils import pad_array
+from moleculenet.featurizers.atomic_coordinates import AtomicCoordinates
 
 
 class BPSymmetryFunctionInput(Featurizer):
@@ -58,12 +54,12 @@ class CoulombMatrix(Featurizer):
   Example:
 
   >>> featurizers = dc.feat.CoulombMatrix(max_atoms=23)
-  >>> input_file = 'deepchem/feat/tests/data/water.sdf' # really backed by water.sdf.csv
+  >>> input_file = 'moleculenet/featurizers/tests/data/water.sdf' # really backed by water.sdf.csv
   >>> tasks = ["atomization_energy"]
   >>> featurizer = dc.data.SDFLoader(tasks, smiles_field="smiles", mol_field="mol",
   ...                                    featurizer=featurizers, verbose=False)
   >>> dataset = featurizer.featurize(input_file)
-  Reading structures from deepchem/feat/tests/data/water.sdf.
+  Reading structures from moleculenet/featurizers/tests/data/water.sdf.
   Featurizing sample 0
   """
   conformers = True
@@ -219,12 +215,12 @@ class CoulombMatrixEig(CoulombMatrix):
   Example:
 
   >>> featurizers = dc.feat.CoulombMatrixEig(max_atoms=23)
-  >>> input_file = 'deepchem/feat/tests/data/water.sdf' # really backed by water.sdf.csv
+  >>> input_file = 'moleculenet/featurizers/tests/data/water.sdf' # really backed by water.sdf.csv
   >>> tasks = ["atomization_energy"]
   >>> featurizer = dc.data.SDFLoader(tasks, smiles_field="smiles", mol_field="mol",
   ...                                    featurizer=featurizers, verbose=False)
   >>> dataset = featurizer.featurize(input_file)
-  Reading structures from deepchem/feat/tests/data/water.sdf.
+  Reading structures from moleculenet/featurizers/tests/data/water.sdf.
   Featurizing sample 0
 
   """

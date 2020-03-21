@@ -1,10 +1,6 @@
 """
 Featurizes proposed binding pockets.
 """
-__author__ = "Bharath Ramsundar"
-__copyright__ = "Copyright 2017, Stanford University"
-__license__ = "MIT"
-
 import numpy as np
 from moleculenet.utils import log
 from moleculenet.featurizers import Featurizer
