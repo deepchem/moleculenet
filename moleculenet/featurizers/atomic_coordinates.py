@@ -7,11 +7,11 @@ from moleculenet.utils import log
 from moleculenet.featurizers import Featurizer
 from moleculenet.featurizers import ComplexFeaturizer
 from moleculenet.utils import pad_array
-from moleculenet.rdkit_util import load_molecule
-from moleculenet.rdkit_util import merge_molecules
-from moleculenet.rdkit_util import merge_molecules_xyz
-from moleculenet.rdkit_util import get_xyz_from_mol
-from moleculenet.rdkit_util import MoleculeLoadException
+from moleculenet.utils.rdkit_util import load_molecule
+from moleculenet.utils.rdkit_util import merge_molecules
+from moleculenet.utils.rdkit_util import merge_molecules_xyz
+from moleculenet.utils.rdkit_util import get_xyz_from_mol
+from moleculenet.utils.rdkit_util import MoleculeLoadException
 
 
 class AtomicCoordinates(Featurizer):

@@ -1,6 +1,7 @@
 """
 Gathers all splitters in one place for convenient imports
 """
+from moleculenet.splitters.splitters import Splitter
 from moleculenet.splitters.splitters import ScaffoldSplitter
 from moleculenet.splitters.splitters import SpecifiedSplitter
 from moleculenet.splitters.splitters import IndexSplitter

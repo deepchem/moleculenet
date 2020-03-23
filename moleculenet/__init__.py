@@ -42,11 +42,11 @@ from moleculenet.load_function.thermosol_datasets import load_thermosol
 from moleculenet.load_function.hppb_datasets import load_hppb
 from moleculenet.load_function.chembl25_datasets import load_chembl25
 # TODO(rbharath): Should this be here?
-from moleculenet.dnasim import simulate_motif_density_localization
-from moleculenet.dnasim import simulate_motif_counting
-from moleculenet.dnasim import simple_motif_embedding
-from moleculenet.dnasim import motif_density
-from moleculenet.dnasim import simulate_single_motif_detection
+from moleculenet.utils.dnasim import simulate_motif_density_localization
+from moleculenet.utils.dnasim import simulate_motif_counting
+from moleculenet.utils.dnasim import simple_motif_embedding
+from moleculenet.utils.dnasim import motif_density
+from moleculenet.utils.dnasim import simulate_single_motif_detection
 
 #from moleculenet.run_benchmark import run_benchmark
 #from moleculenet import run_benchmark_models

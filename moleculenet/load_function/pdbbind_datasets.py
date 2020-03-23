@@ -13,7 +13,8 @@ import pandas as pd
 import tarfile
 from moleculenet.featurizers import rdkit_grid_featurizer as rgf
 from moleculenet.featurizers.atomic_coordinates import ComplexNeighborListFragmentAtomicCoordinates
-from moleculenet.featurizers.graph_features import AtomicConvFeaturizer
+# TODO(rbharath): Either fix or remove
+#from moleculenet.featurizers.graph_features import AtomicConvFeaturizer
 
 logger = logging.getLogger(__name__)
 DEFAULT_DATA_DIR = moleculenet.utils.get_data_dir()
@@ -292,15 +293,16 @@ def load_pdbbind(reload=True,
           complex_num_atoms=complex_num_atoms,
           max_num_neighbors=max_num_neighbors,
           neighbor_cutoff=neighbor_cutoff)
-    if featurizer == "atomic_conv":
-      featurizer = AtomicConvFeaturizer(
-          labels=labels,
-          frag1_num_atoms=frag1_num_atoms,
-          frag2_num_atoms=frag2_num_atoms,
-          complex_num_atoms=complex_num_atoms,
-          neighbor_cutoff=neighbor_cutoff,
-          max_num_neighbors=max_num_neighbors,
-          batch_size=64)
+    # TODO(rbharath): Either fix or remove
+    #if featurizer == "atomic_conv":
+    #  featurizer = AtomicConvFeaturizer(
+    #      labels=labels,
+    #      frag1_num_atoms=frag1_num_atoms,
+    #      frag2_num_atoms=frag2_num_atoms,
+    #      complex_num_atoms=complex_num_atoms,
+    #      neighbor_cutoff=neighbor_cutoff,
+    #      max_num_neighbors=max_num_neighbors,
+    #      batch_size=64)
   else:
     raise ValueError("Featurizer not supported")
 

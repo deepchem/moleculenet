@@ -10,7 +10,8 @@ from moleculenet.transformers.transformers import BalancingTransformer
 from moleculenet.transformers.transformers import CDFTransformer
 from moleculenet.transformers.transformers import PowerTransformer
 from moleculenet.transformers.transformers import CoulombFitTransformer
-from moleculenet.transformers.transformers import IRVTransformer
+# TODO(rbharath): Either remove this or fix it
+#from moleculenet.transformers.transformers import IRVTransformer
 from moleculenet.transformers.transformers import DAGTransformer
 from moleculenet.transformers.transformers import ANITransformer
 from moleculenet.transformers.transformers import MinMaxTransformer

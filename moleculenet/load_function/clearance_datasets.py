@@ -7,7 +7,7 @@ import moleculenet
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DIR = moleculenetn.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 CLEARANCE_URL = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/clearance.csv'
 
 

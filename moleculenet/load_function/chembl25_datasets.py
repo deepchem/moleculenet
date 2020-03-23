@@ -13,7 +13,7 @@ from moleculenet.featurizers import SmilesToSeq, SmilesToImage
 from moleculenet.featurizers.smiles_featurizers import create_char_to_idx
 
 CHEMBL_URL = "https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/chembl_25.csv.gz"
-DEFAULT_DIR = dc.utils.get_data_dir()
+DEFAULT_DIR = moleculenet.utils.get_data_dir()
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ def load_chembl25(featurizer="smiles2seq",
           "{} does not exist. Reconstructing dataset.".format(save_folder))
     else:
       logger.info("{} exists. Restoring dataset.".format(save_folder))
-      loaded, dataset, transformers = dc.utils.save.load_dataset_from_disk(
+      loaded, dataset, transformers = moleculenet.utils.load_dataset_from_disk(
           save_folder)
       if loaded:
         return chembl25_tasks, dataset, transformers
@@ -94,7 +94,7 @@ def load_chembl25(featurizer="smiles2seq",
   if not os.path.exists(dataset_file):
     logger.warning("File {} not found. Downloading dataset. (~555 MB)".format(
         dataset_file))
-    dc.utils.download_url(url=CHEMBL_URL, dest_dir=data_dir)
+    moleculenet.utils.download_url(url=CHEMBL_URL, dest_dir=data_dir)
 
   if featurizer == 'ECFP':
     featurizer = moleculenet.featurizers.CircularFingerprint(size=1024)
@@ -121,7 +121,7 @@ def load_chembl25(featurizer="smiles2seq",
     raise ValueError(
         "Featurizer of type {} is not supported".format(featurizer))
 
-  loader = dc.data.CSVLoader(
+  loader = moleculenet.data.CSVLoader(
       tasks=chembl25_tasks, smiles_field='smiles', featurizer=featurizer)
   dataset = loader.featurize(
       input_files=[dataset_file], shard_size=10000, data_dir=save_folder)
@@ -129,12 +129,12 @@ def load_chembl25(featurizer="smiles2seq",
   if split is None:
     if transformer_type == "minmax":
       transformers = [
-          dc.trans.MinMaxTransformer(
+          moleculenet.transformers.MinMaxTransformer(
               transform_X=False, transform_y=True, dataset=dataset)
       ]
     else:
       transformers = [
-          dc.trans.NormalizationTransformer(
+          moleculenet.transformers.NormalizationTransformer(
               transform_X=False, transform_y=True, dataset=dataset)
       ]
 
@@ -144,9 +144,9 @@ def load_chembl25(featurizer="smiles2seq",
     return chembl25_tasks, (dataset, None, None), transformers
 
   splitters = {
-      'index': dc.splits.IndexSplitter(),
-      'random': dc.splits.RandomSplitter(),
-      'scaffold': dc.splits.ScaffoldSplitter(),
+      'index': moleculenet.splitters.IndexSplitter(),
+      'random': moleculenet.splitters.RandomSplitter(),
+      'scaffold': moleculenet.splitters.ScaffoldSplitter(),
   }
 
   logger.info("About to split data with {} splitter.".format(split))
@@ -164,12 +164,12 @@ def load_chembl25(featurizer="smiles2seq",
       frac_valid=frac_valid)
   if transformer_type == "minmax":
     transformers = [
-        dc.trans.MinMaxTransformer(
+        moleculenet.transformers.MinMaxTransformer(
             transform_X=False, transform_y=True, dataset=train)
     ]
   else:
     transformers = [
-        dc.trans.NormalizationTransformer(
+        moleculenet.transformers.NormalizationTransformer(
             transform_X=False, transform_y=True, dataset=train)
     ]
 
@@ -179,7 +179,7 @@ def load_chembl25(featurizer="smiles2seq",
     test = transformer.transform(test)
 
   if reload:
-    dc.utils.save.save_dataset_to_disk(save_folder, train, valid, test,
+    moleculenet.utils.save_dataset_to_disk(save_folder, train, valid, test,
                                        transformers)
 
   return chembl25_tasks, (train, valid, test), transformers
