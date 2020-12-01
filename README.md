@@ -1,4 +1,4 @@
-# MoleculeNet
+# MoleculeNet Leaderboard
 
 ## Biophysics
 
