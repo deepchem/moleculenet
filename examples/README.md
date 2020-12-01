@@ -5,7 +5,7 @@ The repository includes the following example scripts:
 
 ## Fingerprint
 
-To train a random forest on ECFP2 fingerprint
+To train a random forest on 1024-bit ECFP2 fingerprint
 
 ```bash
 python fingerprint.py
