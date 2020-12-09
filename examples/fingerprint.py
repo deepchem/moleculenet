@@ -220,7 +220,7 @@ if __name__ == '__main__':
             'bootstrap': True,
             'criterion': "entropy",
             'min_samples_split': 32,
-            'n_estimators': 30,
+            'n_estimators': 30
         }
         val_metrics, test_metrics = main(args['result_path'], args,
                                          default_hyperparams)
