@@ -1,6 +1,7 @@
 import errno
 import os
 
+
 def mkdir_p(path):
     """Create a folder for the given path.
 
@@ -17,6 +18,7 @@ def mkdir_p(path):
             print('Directory {} already exists.'.format(path))
         else:
             raise
+
 
 def init_trial_path(args):
     """Initialize the path for a hyperparameter setting
