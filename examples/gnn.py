@@ -188,7 +188,7 @@ if __name__ == '__main__':
       default=3,
       help='Number of runs for each hyperparameter configuration (default: 3)')
   parser.add_argument(
-      '-p',
+      '-pa',
       '--patience',
       type=int,
       default=30,
