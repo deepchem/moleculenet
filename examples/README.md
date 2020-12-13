@@ -2,6 +2,7 @@
 
 The repository includes the following example scripts:
 - fingerprint
+- gnn
 
 ## Fingerprint
 

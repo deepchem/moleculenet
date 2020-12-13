@@ -1,33 +1,45 @@
 import deepchem as dc
 import json
 import numpy as np
+import torch.nn.functional as F
 
 from copy import deepcopy
-from functools import partial
 from hyperopt import hp, fmin, tpe
 from shutil import copyfile
-from sklearn.ensemble import RandomForestClassifier
 
-from utils import init_trial_path, load_dataset
-
-
-def rf_model_builder(model_dir, hyperparams):
-  sklearn_model = RandomForestClassifier(
-      n_estimators=hyperparams['n_estimators'],
-      criterion=hyperparams['criterion'],
-      min_samples_split=hyperparams['min_samples_split'],
-      bootstrap=hyperparams['bootstrap'])
-  return dc.models.SklearnModel(sklearn_model, model_dir)
+from utils import init_trial_path, load_dataset, EarlyStopper
 
 
-def load_model(args, tasks, hyperparams):
-  if args['model'] == 'RF':
-    model = dc.models.SingletaskToMultitask(
-        tasks, partial(rf_model_builder, hyperparams=hyperparams))
-  else:
-    raise ValueError('Unexpected model: {}'.format(args['model']))
+def load_model(save_pth, args, tasks, hyperparams):
+    if args['dataset'] in ['BACE']:
+        mode = 'classification'
+        # binary classification
+        n_classes = 2
+    else:
+        raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
-  return model
+    if args['featurizer'] == 'GC':
+        number_atom_features = 30
+
+    if args['model'] == 'GCN':
+        model = dc.models.GCNModel(
+            n_tasks=len(tasks),
+            graph_conv_layers=[hyperparams['hidden_feats']] * hyperparams['num_gnn_layers'],
+            activation=F.relu,
+            residual=hyperparams['residual'],
+            batchnorm=hyperparams['batchnorm'],
+            dropout=hyperparams['dropout'],
+            predictor_hidden_feats=hyperparams['hidden_feats'],
+            predictor_dropout=hyperparams['dropout'],
+            mode=mode,
+            number_atom_features=number_atom_features,
+            n_classes=n_classes,
+            learning_rate=hyperparams['lr'],
+            model_dir=save_pth)
+    else:
+        raise ValueError('Unexpected model: {}'.format(args['model']))
+
+    return model
 
 
 def main(save_path, args, hyperparams):
@@ -46,9 +58,25 @@ def main(save_path, args, hyperparams):
 
   for _ in range(args['num_runs']):
     # Model
-    model = load_model(args, tasks, hyperparams)
-    model.fit(train_set)
+    model = load_model(save_path, args, tasks, hyperparams)
+    # Object for early stop tracking
+    stopper = EarlyStopper(save_path, args['metric'], args['patience'])
 
+    # 1000 for maximum number of epochs
+    for _ in range(1000):
+      model.fit(train_set, nb_epoch=1, max_checkpoints_to_keep=1,
+                deterministic=False, restore=True)
+
+      val_metric = model.evaluate(val_set, [metric], transformers)
+      if args['metric'] == 'roc_auc':
+        val_metric = val_metric['mean-roc_auc_score']
+
+      # Early stop
+      to_stop = stopper(model, val_metric)
+      if to_stop:
+        break
+
+    stopper.load_state_dict(model)
     val_metric = model.evaluate(val_set, [metric], transformers)
     test_metric = model.evaluate(test_set, [metric], transformers)
 
@@ -56,8 +84,8 @@ def main(save_path, args, hyperparams):
       val_metric = val_metric['mean-roc_auc_score']
       test_metric = test_metric['mean-roc_auc_score']
 
-      all_run_val_metrics.append(val_metric)
-      all_run_test_metrics.append(test_metric)
+    all_run_val_metrics.append(val_metric)
+    all_run_test_metrics.append(test_metric)
 
   with open(save_path + '/eval.txt', 'w') as f:
     f.write('Best val {}: {:.4f} +- {:.4f}\n'.format(
@@ -72,15 +100,16 @@ def main(save_path, args, hyperparams):
 
   return all_run_val_metrics, all_run_test_metrics
 
-
 def init_hyper_search_space(args):
   # Model-based search space
-  if args['model'] == 'RF':
+  if args['model'] == 'GCN':
     search_space = {
-        'n_estimators': hp.choice('n_estimators', [10, 30, 100]),
-        'criterion': hp.choice('criterion', ["gini", "entropy"]),
-        'min_samples_split': hp.choice('min_samples_split', [2, 4, 8, 16, 32]),
-        'bootstrap': hp.choice('bootstrap', [True, False]),
+      'lr': hp.uniform('lr', low=1e-4, high=3e-1),
+      'hidden_feats': hp.choice('hidden_feats', [32, 64, 128, 256, 512]),
+      'num_gnn_layers': hp.choice('num_gnn_layers', [1, 2, 3, 4, 5]),
+      'residual': hp.choice('residual', [True, False]),
+      'batchnorm': hp.choice('batchnorm', [True, False]),
+      'dropout': hp.uniform('dropout', low=0., high=0.6)
     }
   else:
     raise ValueError('Unexpected model: {}'.format(args['model']))
@@ -122,13 +151,12 @@ def bayesian_optimization(args):
 
   return best_val_metrics, best_test_metrics
 
-
 if __name__ == '__main__':
   import argparse
 
   from utils import decide_metric, mkdir_p
 
-  parser = argparse.ArgumentParser('Examples for MoleculeNet with fingerprint')
+  parser = argparse.ArgumentParser('Examples for MoleculeNet with GNN')
   parser.add_argument(
       '-d',
       '--dataset',
@@ -138,15 +166,15 @@ if __name__ == '__main__':
   parser.add_argument(
       '-m',
       '--model',
-      choices=['RF'],
-      default='RF',
-      help='Options include 1) random forest (RF) (default: RF)')
+      choices=['GCN'],
+      default='GCN',
+      help='Options include 1) Graph Convolutional Network (GCN) (default: GCN)')
   parser.add_argument(
       '-f',
       '--featurizer',
-      choices=['ECFP'],
-      default='ECFP',
-      help='Options include 1) ECFP (default: ECFP)')
+      choices=['GC'],
+      default='GC',
+      help='Options include 1) Graph Convolution (GC) (default: GC)')
   parser.add_argument(
       '-p',
       '--result-path',
@@ -159,6 +187,13 @@ if __name__ == '__main__':
       type=int,
       default=3,
       help='Number of runs for each hyperparameter configuration (default: 3)')
+  parser.add_argument(
+      '-p',
+      '--patience',
+      type=int,
+      default=30,
+      help='Number of epochs to wait before early stop if validation performance '
+           'stops getting improved (default: 30)')
   parser.add_argument(
       '-hs',
       '--hyper-search',
@@ -183,12 +218,8 @@ if __name__ == '__main__':
     val_metrics, test_metrics = bayesian_optimization(args)
   else:
     print('Use the manually specified hyperparameters')
-    default_hyperparams = {
-        'bootstrap': True,
-        'criterion': "entropy",
-        'min_samples_split': 32,
-        'n_estimators': 30
-    }
+    # TODO
+    default_hyperparams = {}
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
 
