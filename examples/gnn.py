@@ -63,9 +63,9 @@ def main(save_path, args, hyperparams):
     stopper = EarlyStopper(save_path, args['metric'], args['patience'])
 
     # 1000 for maximum number of epochs
-    for _ in range(1000):
+    for epoch in range(1000):
       model.fit(train_set, nb_epoch=1, max_checkpoints_to_keep=1,
-                deterministic=False, restore=True)
+                deterministic=False, restore=epoch > 0)
 
       val_metric = model.evaluate(val_set, [metric], transformers)
       if args['metric'] == 'roc_auc':
