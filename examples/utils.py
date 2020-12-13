@@ -55,9 +55,16 @@ def load_dataset(args):
   from deepchem.molnet import load_bace_classification
 
   splitter = 'scaffold'
+
+  if args['featurizer'] == 'ECFP':
+    featurizer = 'ECFP'
+  elif args['featurizer'] == 'GC':
+    from deepchem.feat import MolGraphConvFeaturizer
+    featurizer = MolGraphConvFeaturizer()
+
   if args['dataset'] == 'BACE':
     tasks, all_dataset, transformers = load_bace_classification(
-        featurizer=args['featurizer'], splitter=splitter, reload=False)
+        featurizer=featurizer, splitter=splitter, reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
