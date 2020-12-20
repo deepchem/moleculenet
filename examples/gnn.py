@@ -218,14 +218,13 @@ if __name__ == '__main__':
     val_metrics, test_metrics = bayesian_optimization(args)
   else:
     print('Use the manually specified hyperparameters')
-    # TODO
     default_hyperparams = {
-      'lr': 3e-4,
-      'hidden_feats': 32,
-      'num_gnn_layers': 1,
-      'residual': False,
       'batchnorm': False,
-      'dropout': 0.
+      'dropout': 0.07176813003011602,
+      'hidden_feats': 512,
+      'lr': 0.0859313057313352,
+      'num_gnn_layers': 2,
+      'residual': False
     }
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
