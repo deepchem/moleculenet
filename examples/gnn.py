@@ -11,35 +11,36 @@ from utils import init_trial_path, load_dataset, EarlyStopper
 
 
 def load_model(save_pth, args, tasks, hyperparams):
-    if args['dataset'] in ['BACE']:
-        mode = 'classification'
-        # binary classification
-        n_classes = 2
-    else:
-        raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
+  if args['dataset'] in ['BACE']:
+    mode = 'classification'
+    # binary classification
+    n_classes = 2
+  else:
+    raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
-    if args['featurizer'] == 'GC':
-        number_atom_features = 30
+  if args['featurizer'] == 'GC':
+    number_atom_features = 30
 
-    if args['model'] == 'GCN':
-        model = dc.models.GCNModel(
-            n_tasks=len(tasks),
-            graph_conv_layers=[hyperparams['hidden_feats']] * hyperparams['num_gnn_layers'],
-            activation=F.relu,
-            residual=hyperparams['residual'],
-            batchnorm=hyperparams['batchnorm'],
-            dropout=hyperparams['dropout'],
-            predictor_hidden_feats=hyperparams['hidden_feats'],
-            predictor_dropout=hyperparams['dropout'],
-            mode=mode,
-            number_atom_features=number_atom_features,
-            n_classes=n_classes,
-            learning_rate=hyperparams['lr'],
-            model_dir=save_pth)
-    else:
-        raise ValueError('Unexpected model: {}'.format(args['model']))
+  if args['model'] == 'GCN':
+    model = dc.models.GCNModel(
+        n_tasks=len(tasks),
+        graph_conv_layers=[hyperparams['hidden_feats']] *
+        hyperparams['num_gnn_layers'],
+        activation=F.relu,
+        residual=hyperparams['residual'],
+        batchnorm=hyperparams['batchnorm'],
+        dropout=hyperparams['dropout'],
+        predictor_hidden_feats=hyperparams['hidden_feats'],
+        predictor_dropout=hyperparams['dropout'],
+        mode=mode,
+        number_atom_features=number_atom_features,
+        n_classes=n_classes,
+        learning_rate=hyperparams['lr'],
+        model_dir=save_pth)
+  else:
+    raise ValueError('Unexpected model: {}'.format(args['model']))
 
-    return model
+  return model
 
 
 def main(save_path, args, hyperparams):
@@ -64,8 +65,12 @@ def main(save_path, args, hyperparams):
 
     # 1000 for maximum number of epochs
     for epoch in range(1000):
-      model.fit(train_set, nb_epoch=1, max_checkpoints_to_keep=1,
-                deterministic=False, restore=epoch > 0)
+      model.fit(
+          train_set,
+          nb_epoch=1,
+          max_checkpoints_to_keep=1,
+          deterministic=False,
+          restore=epoch > 0)
 
       val_metric = model.evaluate(val_set, [metric], transformers)
       if args['metric'] == 'roc_auc':
@@ -100,16 +105,17 @@ def main(save_path, args, hyperparams):
 
   return all_run_val_metrics, all_run_test_metrics
 
+
 def init_hyper_search_space(args):
   # Model-based search space
   if args['model'] == 'GCN':
     search_space = {
-      'lr': hp.uniform('lr', low=1e-4, high=3e-1),
-      'hidden_feats': hp.choice('hidden_feats', [32, 64, 128, 256, 512]),
-      'num_gnn_layers': hp.choice('num_gnn_layers', [1, 2, 3, 4, 5]),
-      'residual': hp.choice('residual', [True, False]),
-      'batchnorm': hp.choice('batchnorm', [True, False]),
-      'dropout': hp.uniform('dropout', low=0., high=0.6)
+        'lr': hp.uniform('lr', low=1e-4, high=3e-1),
+        'hidden_feats': hp.choice('hidden_feats', [32, 64, 128, 256, 512]),
+        'num_gnn_layers': hp.choice('num_gnn_layers', [1, 2, 3, 4, 5]),
+        'residual': hp.choice('residual', [True, False]),
+        'batchnorm': hp.choice('batchnorm', [True, False]),
+        'dropout': hp.uniform('dropout', low=0., high=0.6)
     }
   else:
     raise ValueError('Unexpected model: {}'.format(args['model']))
@@ -151,6 +157,7 @@ def bayesian_optimization(args):
 
   return best_val_metrics, best_test_metrics
 
+
 if __name__ == '__main__':
   import argparse
 
@@ -168,7 +175,8 @@ if __name__ == '__main__':
       '--model',
       choices=['GCN'],
       default='GCN',
-      help='Options include 1) Graph Convolutional Network (GCN) (default: GCN)')
+      help='Options include 1) Graph Convolutional Network (GCN) (default: GCN)'
+  )
   parser.add_argument(
       '-f',
       '--featurizer',
@@ -193,7 +201,7 @@ if __name__ == '__main__':
       type=int,
       default=30,
       help='Number of epochs to wait before early stop if validation performance '
-           'stops getting improved (default: 30)')
+      'stops getting improved (default: 30)')
   parser.add_argument(
       '-hs',
       '--hyper-search',
@@ -219,12 +227,12 @@ if __name__ == '__main__':
   else:
     print('Use the manually specified hyperparameters')
     default_hyperparams = {
-      'batchnorm': False,
-      'dropout': 0.07176813003011602,
-      'hidden_feats': 512,
-      'lr': 0.0859313057313352,
-      'num_gnn_layers': 2,
-      'residual': False
+        'batchnorm': False,
+        'dropout': 0.07176813003011602,
+        'hidden_feats': 512,
+        'lr': 0.0859313057313352,
+        'num_gnn_layers': 2,
+        'residual': False
     }
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)

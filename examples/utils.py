@@ -2,6 +2,7 @@ import errno
 import os
 import torch
 
+
 def decide_metric(dataset):
   if dataset == 'BACE':
     return 'roc_auc'
@@ -72,6 +73,7 @@ def load_dataset(args):
 
 
 class EarlyStopper():
+
   def __init__(self, save_path, metric, patience):
     if metric in ['roc_auc']:
       self.best_score = 0
