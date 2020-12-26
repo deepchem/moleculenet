@@ -80,6 +80,8 @@ def main(save_path, args, hyperparams):
       val_metric = model.evaluate(val_set, [metric], transformers)
       if args['metric'] == 'roc_auc':
         val_metric = val_metric['mean-roc_auc_score']
+      if args['metric'] == 'rmse':
+        val_metric = val_metric['mean-rms_score']
 
       # Early stop
       to_stop = stopper(model, val_metric)
