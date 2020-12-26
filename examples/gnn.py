@@ -17,6 +17,7 @@ def load_model(save_pth, args, tasks, hyperparams):
     n_classes = 2
   elif args['dataset'] in ['BACE_regression']:
     mode = 'regression'
+    n_classes = None
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
