@@ -1,0 +1,6 @@
+{
+  "bootstrap": true,
+  "criterion": "mse",
+  "min_samples_split": 32,
+  "n_estimators": 100
+}
