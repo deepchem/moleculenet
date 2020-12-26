@@ -13,9 +13,10 @@ python fingerprint.py
 ```
 
 The feasible arguments include:
-- **Dataset**: `-d dataset` [default=BACE]
-    - Specifies the dataset to use.
-    - By default we use `BACE`.
+- **Dataset**: `-d dataset`
+    - Specifies the dataset to use, which can be one of the following:
+        - `BACE_classification`
+        - `BACE_regression`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
@@ -33,9 +34,10 @@ python gnn.py
 ```
 
 The feasible arguments include:
-- **Dataset**: `-d dataset` [default=BACE]
-    - Specifies the dataset to use.
-    - By default we use `BACE`.
+- **Dataset**: `-d dataset`
+    - Specifies the dataset to use, which can be one of the following:
+        - `BACE_classification`
+        - `BACE_regression`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
