@@ -174,7 +174,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification'],
+      choices=['BACE_classification', 'BACE_regression'],
       help='Dataset to use')
   parser.add_argument(
       '-m',
