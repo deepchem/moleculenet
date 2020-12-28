@@ -11,10 +11,13 @@ from utils import init_trial_path, load_dataset, EarlyStopper
 
 
 def load_model(save_pth, args, tasks, hyperparams):
-  if args['dataset'] in ['BACE']:
+  if args['dataset'] in ['BACE_classification']:
     mode = 'classification'
     # binary classification
     n_classes = 2
+  elif args['dataset'] in ['BACE_regression']:
+    mode = 'regression'
+    n_classes = None
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
@@ -51,6 +54,8 @@ def main(save_path, args, hyperparams):
   # Metric
   if args['metric'] == 'roc_auc':
     metric = dc.metrics.Metric(dc.metrics.roc_auc_score, np.mean)
+  elif args['metric'] == 'rmse':
+    metric = dc.metrics.Metric(dc.metrics.rms_score, np.mean)
   else:
     raise ValueError('Unexpected metric: {}'.format(args['metric']))
 
@@ -75,6 +80,8 @@ def main(save_path, args, hyperparams):
       val_metric = model.evaluate(val_set, [metric], transformers)
       if args['metric'] == 'roc_auc':
         val_metric = val_metric['mean-roc_auc_score']
+      if args['metric'] == 'rmse':
+        val_metric = val_metric['mean-rms_score']
 
       # Early stop
       to_stop = stopper(model, val_metric)
@@ -88,6 +95,9 @@ def main(save_path, args, hyperparams):
     if args['metric'] == 'roc_auc':
       val_metric = val_metric['mean-roc_auc_score']
       test_metric = test_metric['mean-roc_auc_score']
+    elif args['metric'] == 'rmse':
+      val_metric = val_metric['mean-rms_score']
+      test_metric = test_metric['mean-rms_score']
 
     all_run_val_metrics.append(val_metric)
     all_run_test_metrics.append(test_metric)
@@ -167,9 +177,8 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE'],
-      default='BACE',
-      help='Dataset to use (default: BACE)')
+      choices=['BACE_classification', 'BACE_regression'],
+      help='Dataset to use')
   parser.add_argument(
       '-m',
       '--model',
@@ -226,14 +235,9 @@ if __name__ == '__main__':
     val_metrics, test_metrics = bayesian_optimization(args)
   else:
     print('Use the manually specified hyperparameters')
-    default_hyperparams = {
-        'batchnorm': False,
-        'dropout': 0.07176813003011602,
-        'hidden_feats': 512,
-        'lr': 0.0859313057313352,
-        'num_gnn_layers': 2,
-        'residual': False
-    }
+    with open('configures/{}_{}/{}.json'.format(
+            args['model'], args['featurizer'], args['dataset'])) as f:
+      default_hyperparams = json.load(f)
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
 
