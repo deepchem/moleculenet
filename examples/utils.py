@@ -4,7 +4,7 @@ import torch
 
 
 def decide_metric(dataset):
-  if dataset == 'BACE_classification':
+  if dataset in ['BACE_classification', 'BBBP']:
     return 'roc_auc'
   elif dataset == 'BACE_regression':
     return 'rmse'
@@ -66,6 +66,10 @@ def load_dataset(args):
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
     tasks, all_dataset, transformers = load_bace_classification(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'BBBP':
+    from deepchem.molnet import load_bbbp
+    tasks, all_dataset, transformers = load_bbbp(
         featurizer=featurizer, splitter=splitter, reload=False)
   elif args['dataset'] == 'BACE_regression':
     from deepchem.molnet import load_bace_regression
