@@ -22,5 +22,5 @@
 
 | Rank | Model         | Featurization  | Test ROC-AUC     | Validation ROC-AUC | Contact                           | References	                                                                           | Date           |
 | ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| 1    | Random Forest | 1024-bit ECFP4 | 0.9104 +- 0.0078 | 0.9422 +- 0.0014   | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Dec 30th, 2020 |
-| 2    | GCN           | GraphConv      | 
+| 1    | Random Forest | 1024-bit ECFP4 | 0.9540 +- 0.0038 | 0.9062 +- 0.0079   | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Dec 30th, 2020 |
+| 2    | GCN           | GraphConv      | 0.9214 +- 0.0106 | 0.9445 +- 0.0049   | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Dec 30th, 2020 |

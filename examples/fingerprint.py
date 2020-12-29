@@ -205,7 +205,7 @@ if __name__ == '__main__':
   else:
     print('Use the manually specified hyperparameters')
     with open('configures/{}_{}/{}.json'.format(
-            args['model'], args['featurizer'], args['dataset'])) as f:
+        args['model'], args['featurizer'], args['dataset'])) as f:
       default_hyperparams = json.load(f)
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
