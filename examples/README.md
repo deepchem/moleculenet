@@ -17,6 +17,7 @@ The feasible arguments include:
     - Specifies the dataset to use, which can be one of the following:
         - `BACE_classification`
         - `BACE_regression`
+        - `BBBP`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
@@ -38,6 +39,7 @@ The feasible arguments include:
     - Specifies the dataset to use, which can be one of the following:
         - `BACE_classification`
         - `BACE_regression`
+        - `BBBP`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.

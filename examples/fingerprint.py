@@ -28,7 +28,7 @@ def rf_model_builder(model_dir, hyperparams, mode):
 
 
 def load_model(args, tasks, hyperparams):
-  if args['dataset'] in ['BACE_classification']:
+  if args['dataset'] in ['BACE_classification', 'BBBP']:
     mode = 'classification'
   elif args['dataset'] in ['BACE_regression']:
     mode = 'regression'
@@ -100,7 +100,7 @@ def init_hyper_search_space(args):
         'min_samples_split': hp.choice('min_samples_split', [2, 4, 8, 16, 32]),
         'bootstrap': hp.choice('bootstrap', [True, False]),
     }
-    if args['dataset'] in ['BACE_classification']:
+    if args['dataset'] in ['BACE_classification', 'BBBP']:
       search_space['criterion'] = hp.choice('criterion', ["gini", "entropy"])
     else:
       search_space['criterion'] = hp.choice('criterion', ["mse", "mae"])
@@ -154,7 +154,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification', 'BACE_regression'],
+      choices=['BACE_classification', 'BACE_regression', 'BBBP'],
       help='Dataset to use')
   parser.add_argument(
       '-m',
@@ -205,7 +205,7 @@ if __name__ == '__main__':
   else:
     print('Use the manually specified hyperparameters')
     with open('configures/{}_{}/{}.json'.format(
-            args['model'], args['featurizer'], args['dataset'])) as f:
+        args['model'], args['featurizer'], args['dataset'])) as f:
       default_hyperparams = json.load(f)
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
