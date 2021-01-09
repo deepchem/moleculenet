@@ -6,7 +6,7 @@ import torch
 def decide_metric(dataset):
   if dataset in ['BACE_classification', 'BBBP']:
     return 'roc_auc'
-  elif dataset == 'BACE_regression':
+  elif dataset in ['BACE_regression', 'Clearance']:
     return 'rmse'
   else:
     return ValueError('Unexpected dataset: {}'.format(dataset))
@@ -74,6 +74,10 @@ def load_dataset(args):
   elif args['dataset'] == 'BACE_regression':
     from deepchem.molnet import load_bace_regression
     tasks, all_dataset, transformers = load_bace_regression(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'Clearance':
+    from deepchem.molnet import load_clearance
+    tasks, all_dataset, transformers = load_clearance(
         featurizer=featurizer, splitter=splitter, reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
