@@ -27,6 +27,7 @@
 
 ### Clearance
 
-| Rank | Model         | Featurization  | Test RMSE         | Validation RMSE  | Contact                           | References	                                                                             | Date           |
-| ---- | ------------- | -------------- | ----------------- | ---------------- | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| 1    | Random Forest | 1024-bit ECFP4 | 46.7056 +- 1.2794 | 
+| Rank | Model         | Featurization  | Test RMSE         | Validation RMSE   | Contact                           | References	                                                                           | Date           |
+| ---- | ------------- | -------------- | ----------------- | ----------------- | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+| 1    | Random Forest | 1024-bit ECFP4 | 46.7056 +- 1.2794 | 43.1696 +- 0.9360 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Jan 10th, 2021 |
+| 2    | GCN           | GraphConv      | 51.2271 +- 2.2749 | 42.1724 +- 1.8236 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Jan 10th, 2021 |
