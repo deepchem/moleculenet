@@ -1,0 +1,6 @@
+{
+  "bootstrap": false,
+  "criterion": "entropy",
+  "min_samples_split": 16,
+  "n_estimators": 100
+}
