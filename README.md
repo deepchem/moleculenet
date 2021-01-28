@@ -4,8 +4,10 @@
 
 ### Delaney (ESOL)
 
-| Rank | Model         | Featurization  | Test ROC-AUC     | Validation ROC-AUC | Contact                           | References	                                                                           | Date           |
-| ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+| Rank | Model         | Featurization  | Test RMSE        | Validation RMSE  | Contact                           | References	                                                                             | Date           |
+| ---- | ------------- | -------------- | ---------------- | ---------------- | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+| 1    | GCN           | GraphConv      | 0.8851 +- 0.0292 | 0.9405 +- 0.0310 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Jan 28th, 2020 |
+| 2    | Random Forest | 1024-bit ECFP4 | 1.7406 +- 0.0261 | 1.7932 +- 0.0153 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Jan 28th, 2020 |
 
 ## Biophysics
 
