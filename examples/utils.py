@@ -4,7 +4,7 @@ import torch
 
 
 def decide_metric(dataset):
-  if dataset in ['BACE_classification', 'BBBP']:
+  if dataset in ['BACE_classification', 'BBBP', 'ClinTox']:
     return 'roc_auc'
   elif dataset == 'BACE_regression':
     return 'rmse'
@@ -74,6 +74,10 @@ def load_dataset(args):
   elif args['dataset'] == 'BACE_regression':
     from deepchem.molnet import load_bace_regression
     tasks, all_dataset, transformers = load_bace_regression(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'ClinTox':
+    from deepchem.molnet import load_clintox
+    tasks, all_dataset, transformers = load_clintox(
         featurizer=featurizer, splitter=splitter, reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
