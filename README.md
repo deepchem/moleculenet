@@ -1,5 +1,12 @@
 # MoleculeNet Leaderboard
 
+## Physical Chemistry
+
+### Delaney (ESOL)
+
+| Rank | Model         | Featurization  | Test ROC-AUC     | Validation ROC-AUC | Contact                           | References	                                                                           | Date           |
+| ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+
 ## Biophysics
 
 ### BACE Classification
