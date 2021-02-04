@@ -30,7 +30,7 @@ def rf_model_builder(model_dir, hyperparams, mode):
 def load_model(args, tasks, hyperparams):
   if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox']:
     mode = 'classification'
-  elif args['dataset'] in ['BACE_regression', 'Delaney']:
+  elif args['dataset'] in ['BACE_regression', 'Delaney', 'HOPV']:
     mode = 'regression'
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
@@ -154,7 +154,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney'],
+      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV'],
       help='Dataset to use')
   parser.add_argument(
       '-m',
