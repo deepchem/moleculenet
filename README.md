@@ -45,3 +45,5 @@
 
 | Rank | Model         | Featurization  | Test RMSE        | Validation RMSE  | Contact                           | References	                                                                             | Date           |
 | ---- | ------------- | -------------- | ---------------- | ---------------- | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+| 1    | Random Forest | 1024-bit ECFP4 | 3.7283 +- 0.0219 | 2.7107 +- 0.0173 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Feb 4th, 2021  | 
+| 2    | GCN           | GraphConv      | 5.4312 +- 2.4279 | 2.6516 +- 0.1190 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Feb 4th, 2021  |
