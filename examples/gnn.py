@@ -7,11 +7,12 @@ from copy import deepcopy
 from hyperopt import hp, fmin, tpe
 from shutil import copyfile
 
+import dgl
+
 from utils import init_trial_path, load_dataset, EarlyStopper
 
-
 def load_model(save_pth, args, tasks, hyperparams):
-  if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox']:
+  if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     mode = 'classification'
     # binary classification
     n_classes = 2
@@ -136,7 +137,7 @@ def init_hyper_search_space(args):
 def bayesian_optimization(args):
   results = []
   candidate_hypers = init_hyper_search_space(args)
-
+  print (candidate_hypers)
   def objective(hyperparams):
     configure = deepcopy(args)
     save_path = init_trial_path(args)
@@ -158,13 +159,14 @@ def bayesian_optimization(args):
       candidate_hypers,
       algo=tpe.suggest,
       max_evals=args['num_trials'])
+
   results.sort(key=lambda tup: tup[1])
+  print (results[0])
   best_trial_path, _, best_val_metrics, best_test_metrics = results[0]
 
   copyfile(best_trial_path + '/configure.json',
            args['result_path'] + '/configure.json')
   copyfile(best_trial_path + '/eval.txt', args['result_path'] + '/eval.txt')
-
   return best_val_metrics, best_test_metrics
 
 
@@ -177,7 +179,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV'],
+      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV', 'SIDER'],
       help='Dataset to use')
   parser.add_argument(
       '-m',
@@ -241,7 +243,7 @@ if __name__ == '__main__':
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
 
-    print('Val metric for 3 runs: {:.4f} +- {:.4f}'.format(
-        np.mean(val_metrics), np.std(val_metrics)))
-    print('Test metric for 3 runs: {:.4f} +- {:.4f}'.format(
-        np.mean(test_metrics), np.std(test_metrics)))
+  print('Val metric for 3 runs: {:.4f} +- {:.4f}'.format(
+      np.mean(val_metrics), np.std(val_metrics)))
+  print('Test metric for 3 runs: {:.4f} +- {:.4f}'.format(
+      np.mean(test_metrics), np.std(test_metrics)))

@@ -1,0 +1,6 @@
+{
+  "bootstrap": false,
+  "criterion": "gini",
+  "min_samples_split": 32,
+  "n_estimators": 100
+}
