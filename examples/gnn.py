@@ -137,7 +137,6 @@ def init_hyper_search_space(args):
 def bayesian_optimization(args):
   results = []
   candidate_hypers = init_hyper_search_space(args)
-  print (candidate_hypers)
   def objective(hyperparams):
     configure = deepcopy(args)
     save_path = init_trial_path(args)
