@@ -7,8 +7,6 @@ from copy import deepcopy
 from hyperopt import hp, fmin, tpe
 from shutil import copyfile
 
-import dgl
-
 from utils import init_trial_path, load_dataset, EarlyStopper
 
 def load_model(save_pth, args, tasks, hyperparams):
@@ -160,7 +158,6 @@ def bayesian_optimization(args):
       max_evals=args['num_trials'])
 
   results.sort(key=lambda tup: tup[1])
-  print (results[0])
   best_trial_path, _, best_val_metrics, best_test_metrics = results[0]
 
   copyfile(best_trial_path + '/configure.json',
@@ -242,7 +239,7 @@ if __name__ == '__main__':
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)
 
-  print('Val metric for 3 runs: {:.4f} +- {:.4f}'.format(
+    print('Val metric for 3 runs: {:.4f} +- {:.4f}'.format(
       np.mean(val_metrics), np.std(val_metrics)))
-  print('Test metric for 3 runs: {:.4f} +- {:.4f}'.format(
+    print('Test metric for 3 runs: {:.4f} +- {:.4f}'.format(
       np.mean(test_metrics), np.std(test_metrics)))

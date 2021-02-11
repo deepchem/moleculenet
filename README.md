@@ -53,5 +53,5 @@
 
 | Rank | Model         | Featurization  | Test ROC-AUC     | Validation ROC-AUC | Contact                           | References	                                                                           | Date           |
 | ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| 1    | GCN           | GraphConv      | 0.6265 +- 0.0076 | 0.6409 +- 0.0094   | [Yuanqi Du](ydu6@gmu.edu) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Feb 10th, 2021 |
-| 2    | Random Forest | 1024-bit ECFP4 | 0.6504 +- 0.0011 | 0.6197 +- 0.0023   | [Yuanqi Du](ydu6@gmu.edu) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Feb 10th, 2021 |
+| 1    | Random Forest | 1024-bit ECFP4 | 0.6504 +- 0.0011 | 0.6197 +- 0.0023   | [Yuanqi Du](ydu6@gmu.edu) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Feb 10th, 2021 |
+| 2    | GCN           | GraphConv      | 0.6265 +- 0.0076 | 0.6409 +- 0.0094   | [Yuanqi Du](ydu6@gmu.edu) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Feb 10th, 2021 |
