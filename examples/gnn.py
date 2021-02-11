@@ -136,7 +136,7 @@ def init_hyper_search_space(args):
 def bayesian_optimization(args):
   results = []
   candidate_hypers = init_hyper_search_space(args)
-  
+
   def objective(hyperparams):
     configure = deepcopy(args)
     save_path = init_trial_path(args)
@@ -166,6 +166,7 @@ def bayesian_optimization(args):
   copyfile(best_trial_path + '/eval.txt', args['result_path'] + '/eval.txt')
 
   return best_val_metrics, best_test_metrics
+
 
 if __name__ == '__main__':
   import argparse
