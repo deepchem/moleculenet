@@ -156,13 +156,13 @@ def bayesian_optimization(args):
       candidate_hypers,
       algo=tpe.suggest,
       max_evals=args['num_trials'])
-
   results.sort(key=lambda tup: tup[1])
   best_trial_path, _, best_val_metrics, best_test_metrics = results[0]
 
   copyfile(best_trial_path + '/configure.json',
            args['result_path'] + '/configure.json')
   copyfile(best_trial_path + '/eval.txt', args['result_path'] + '/eval.txt')
+  
   return best_val_metrics, best_test_metrics
 
 
