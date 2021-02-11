@@ -11,7 +11,7 @@ from utils import init_trial_path, load_dataset, EarlyStopper
 
 
 def load_model(save_pth, args, tasks, hyperparams):
-  if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox']:
+  if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     mode = 'classification'
     # binary classification
     n_classes = 2
@@ -177,7 +177,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV'],
+      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV', 'SIDER'],
       help='Dataset to use')
   parser.add_argument(
       '-m',
