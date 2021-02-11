@@ -240,6 +240,6 @@ if __name__ == '__main__':
                                      default_hyperparams)
 
     print('Val metric for 3 runs: {:.4f} +- {:.4f}'.format(
-      np.mean(val_metrics), np.std(val_metrics)))
+        np.mean(val_metrics), np.std(val_metrics)))
     print('Test metric for 3 runs: {:.4f} +- {:.4f}'.format(
-      np.mean(test_metrics), np.std(test_metrics)))
+        np.mean(test_metrics), np.std(test_metrics)))
