@@ -9,6 +9,7 @@ from shutil import copyfile
 
 from utils import init_trial_path, load_dataset, EarlyStopper
 
+
 def load_model(save_pth, args, tasks, hyperparams):
   if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     mode = 'classification'
@@ -162,9 +163,8 @@ def bayesian_optimization(args):
   copyfile(best_trial_path + '/configure.json',
            args['result_path'] + '/configure.json')
   copyfile(best_trial_path + '/eval.txt', args['result_path'] + '/eval.txt')
-  
-  return best_val_metrics, best_test_metrics
 
+  return best_val_metrics, best_test_metrics
 
 if __name__ == '__main__':
   import argparse
