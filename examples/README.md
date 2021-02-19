@@ -21,6 +21,7 @@ The feasible arguments include:
         - `ClinTox`
         - `HOPV`
         - `SIDER`
+        - `Lipo`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
@@ -46,6 +47,7 @@ The feasible arguments include:
         - `ClinTox`
         - `HOPV`
         - `SIDER`
+        - `Lipo`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
