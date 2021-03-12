@@ -62,6 +62,14 @@ def load_dataset(args):
   elif args['featurizer'] == 'GC':
     from deepchem.feat import MolGraphConvFeaturizer
     featurizer = MolGraphConvFeaturizer()
+  elif args['featurizer'] == 'AC':
+    from deepchem.feat import AtomicConvFeaturizer
+    featurizer = AtomicConvFeaturizer(
+        frag1_num_atoms=100,
+        frag2_num_atoms=1000,
+        complex_num_atoms=1100,
+        max_num_neighbors=12,
+        neighbor_cutoff=4)
 
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
@@ -86,7 +94,7 @@ def load_dataset(args):
   elif args['dataset'] == 'HOPV':
     from deepchem.molnet import load_hopv
     tasks, all_dataset, transformers = load_hopv(
-      featurizer=featurizer, splitter=splitter, reload=False)
+        featurizer=featurizer, splitter=splitter, reload=False)
   elif args['dataset'] == 'SIDER':
     from deepchem.molnet import load_sider
     tasks, all_dataset, transformers = load_sider(
@@ -95,6 +103,14 @@ def load_dataset(args):
     from deepchem.molnet import load_lipo
     tasks, all_dataset, transformers = load_lipo(
         featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'PDBbind':
+    from deepchem.molnet import load_pdbbind
+    tasks, all_dataset, transformers = load_pdbbind(
+        featurizer=featurizer,
+        splitter='random',
+        pocket=True,
+        set_name='refined',
+        reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
