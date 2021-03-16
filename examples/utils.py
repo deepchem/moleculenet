@@ -6,7 +6,7 @@ import torch
 def decide_metric(dataset):
   if dataset in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     return 'roc_auc'
-  elif dataset in ['BACE_regression', 'Delaney', 'HOPV', 'Lipo']:
+  elif dataset in ['BACE_regression', 'Delaney', 'HOPV', 'Lipo', 'PDBbind']:
     return 'rmse'
   else:
     return ValueError('Unexpected dataset: {}'.format(dataset))
@@ -107,6 +107,8 @@ def load_dataset(args):
     from deepchem.molnet import load_pdbbind
     tasks, all_dataset, transformers = load_pdbbind(
         featurizer=featurizer,
+        save_dir='.',
+        data_dir='.',
         splitter='random',
         pocket=True,
         set_name='refined',
