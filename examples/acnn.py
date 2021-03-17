@@ -191,9 +191,9 @@ if __name__ == '__main__':
   parser.add_argument(
       '-f',
       '--featurizer',
-      choices=['AC'],
+      choices=['AC', 'RDKG'],
       default='AC',
-      help='Options include 1) Atomic Convolution (AC) (default: AC)')
+      help='Options include 1) Atomic Convolution (AC) and 2) RdkitGrid (RDKG) (default: AC)')
   parser.add_argument(
       '-p',
       '--result-path',
