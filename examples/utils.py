@@ -111,7 +111,7 @@ def load_dataset(args):
         data_dir='.',
         splitter='random',
         pocket=True,
-        set_name='refined',
+        set_name='core',  # refined
         reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
