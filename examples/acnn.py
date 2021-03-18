@@ -44,6 +44,7 @@ def load_model(save_path, args, tasks, hyperparams):
 
 def main(save_path, args, hyperparams):
   # Dataset
+  print(args)
   args, tasks, all_dataset, transformers = load_dataset(args)
   train_set, val_set, test_set = all_dataset
 
@@ -194,9 +195,9 @@ if __name__ == '__main__':
   parser.add_argument(
       '-f',
       '--featurizer',
-      choices=['AC', 'RDKG'],
+      choices=['AC'],
       default='AC',
-      help='Options include 1) Atomic Convolution (AC) and 2) RdkitGrid (RDKG) (default: AC)')
+      help='Options include 1) Atomic Convolution (AC) (default: AC)')
   parser.add_argument(
       '-p',
       '--result-path',

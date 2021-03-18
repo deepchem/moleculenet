@@ -71,13 +71,6 @@ def load_dataset(args):
         complex_num_atoms=1100,
         max_num_neighbors=12,
         neighbor_cutoff=4)
-  elif args['featurizer'] == 'RDKG':
-    from deepchem.feat import RdkitGridFeaturizer
-    featurizer = RdkitGridFeaturizer(
-      feature_types=['flat_combined'],
-      flatten=True,
-      verbose=False,
-      sanitize=True)
 
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
