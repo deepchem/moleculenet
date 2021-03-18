@@ -84,7 +84,8 @@ def main(save_path, args, hyperparams):
       if to_stop:
         break
 
-    stopper.load_state_dict(model)
+
+    model = stopper.load_keras_model()
     val_metric = model.evaluate(val_set, [metric], transformers)
     test_metric = model.evaluate(test_set, [metric], transformers)
 
@@ -119,12 +120,14 @@ def init_hyper_search_space(args):
         'lr':
         hp.uniform('lr', low=1e-4, high=3e-1),
         'layer_sizes':
+        # hp.choice('layer_sizes', [[10]]),
         hp.choice(
             'layer_sizes',
             [[256, 256, 128], [128, 128, 64], [64, 64, 32], [32, 32, 16]]),
         'dropout':
         hp.uniform('dropout', low=0., high=0.6),
         'batch_size':
+        # hp.choice('batch_size', [1])
         hp.choice('batch_size', [1, 6, 12, 24])
     }
   else:

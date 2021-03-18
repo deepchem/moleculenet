@@ -1,6 +1,7 @@
 import errno
 import os
 import torch
+import tensorflow as tf
 
 
 def decide_metric(dataset):
@@ -143,14 +144,21 @@ class EarlyStopper():
     self.patience_count = 0
 
   def __call__(self, model, current_score):
+    from deepchem.models import TorchModel
     if self.mode == 'higher' and current_score > self.best_score:
       self.best_score = current_score
       self.patience_count = 0
-      torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
+      if type(model).__bases__[0] == TorchModel:
+        torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
+      else:  # KerasModel
+        model.model.save(self.save_path + '/early_stop')
     elif self.mode == 'lower' and current_score < self.best_score:
       self.best_score = current_score
       self.patience_count = 0
-      torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
+      if type(model).__bases__[0] == TorchModel:
+        torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
+      else:  # KerasModel
+        model.model.save(self.save_path + '/early_stop')
     else:
       self.patience_count += 1
 
@@ -158,3 +166,6 @@ class EarlyStopper():
 
   def load_state_dict(self, model):
     model.model.load_state_dict(torch.load(self.save_path + '/early_stop.pt'))
+
+  def load_keras_model(self):
+    tf.keras.models.load_model(self.save_path + '/early_stop')
