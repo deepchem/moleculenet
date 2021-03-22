@@ -1,7 +1,6 @@
 import deepchem as dc
 import json
 import numpy as np
-import torch.nn.functional as F
 
 from copy import deepcopy
 from hyperopt import hp, fmin, tpe
@@ -44,7 +43,6 @@ def load_model(save_path, args, tasks, hyperparams):
 
 def main(save_path, args, hyperparams):
   # Dataset
-  print(args)
   args, tasks, all_dataset, transformers = load_dataset(args)
   train_set, val_set, test_set = all_dataset
 
