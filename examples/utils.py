@@ -160,5 +160,5 @@ class EarlyStopper():
   def load_state_dict(self, model):
     model.model.load_state_dict(torch.load(self.save_path + '/early_stop.pt'))
 
-  def load_keras_model(self):
-    tf.keras.models.load_model(self.save_path + '/early_stop')
+  def load_keras_model(self, model):
+    model.restore(model_dir=self.save_path)

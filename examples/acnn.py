@@ -84,7 +84,7 @@ def main(save_path, args, hyperparams):
         break
 
 
-    model = stopper.load_keras_model()
+    stopper.load_keras_model(model)
     val_metric = model.evaluate(val_set, [metric], transformers)
     test_metric = model.evaluate(test_set, [metric], transformers)
 
