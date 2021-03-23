@@ -32,7 +32,7 @@ def load_model(save_path, args, tasks, hyperparams):
         layer_sizes=hyperparams['layer_sizes'],
         dropout=hyperparams['dropout'],
         learning_rate=hyperparams['lr'],
-        batch_size=hyperparams['batch_size'],
+        batch_size=12,
         model_dir=save_path,
     )
   else:
@@ -119,15 +119,11 @@ def init_hyper_search_space(args):
         'lr':
         hp.uniform('lr', low=1e-4, high=3e-1),
         'layer_sizes':
-        # hp.choice('layer_sizes', [[10]]),
         hp.choice(
             'layer_sizes',
-            [[256, 256, 128], [128, 128, 64], [64, 64, 32], [32, 32, 16]]),
+            [[64, 64, 32], [32, 32, 16], [16, 16, 8]]),
         'dropout':
         hp.uniform('dropout', low=0., high=0.6),
-        'batch_size':
-        # hp.choice('batch_size', [1])
-        hp.choice('batch_size', [1, 6, 12, 24])
     }
   else:
     raise ValueError('Unexpected model: {}'.format(args['model']))
