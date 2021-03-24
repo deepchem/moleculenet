@@ -3,6 +3,7 @@
 The repository includes the following example scripts:
 - fingerprint
 - gnn
+- acnn
 
 ## Fingerprint
 
@@ -48,6 +49,26 @@ The feasible arguments include:
         - `HOPV`
         - `SIDER`
         - `Lipo`
+- **Hyperparameter Search (optional)**: `-hs`
+    - Perform a hyperparameter search using Bayesian optimization. It determines the best 
+      hyperparameters based on the validation metric averaged across 3 runs.
+    - If not specified, the script uses default hyperparameters.
+- **Number of Hyperparameter Search Trials (optional)**: `-nt num_trials` [default=16]
+    - The number of trials for hyperparameter search. This comes into effect only when the user specifies 
+      `-hs` as described above.
+
+## ACNN
+
+To train an ACNN using [AtomicConv featurization](https://github.com/deepchem/deepchem/blob/master/deepchem/feat/complex_featurizers/complex_atomic_coordinates.py#L141)
+
+```bash
+python acnn.py
+```
+
+The feasible arguments include:
+- **Dataset**: `-d dataset`
+    - Specifies the dataset to use, which can be one of the following:
+        - `PDBbind`
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
