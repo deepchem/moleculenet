@@ -123,7 +123,7 @@ def load_dataset(args):
 class EarlyStopper():
 
   def __init__(self, save_path, metric, patience):
-    if metric in ['roc_auc']:
+    if metric in ['roc_auc', 'r2']:
       self.best_score = 0
       self.mode = 'higher'
     elif metric in ['rmse']:

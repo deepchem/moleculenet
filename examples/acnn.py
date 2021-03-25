@@ -12,7 +12,6 @@ from utils import init_trial_path, load_dataset, EarlyStopper
 def load_model(save_path, args, tasks, hyperparams):
   if args['dataset'] in ['PDBbind']:
     mode = 'regression'
-    n_classes = None
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
@@ -51,6 +50,8 @@ def main(save_path, args, hyperparams):
     metric = dc.metrics.Metric(dc.metrics.roc_auc_score, np.mean)
   elif args['metric'] == 'rmse':
     metric = dc.metrics.Metric(dc.metrics.rms_score, np.mean)
+  elif args['metric'] == 'r2':
+    metric = dc.metrics.Metric(dc.metrics.pearson_r2_score, np.mean)
   else:
     raise ValueError('Unexpected metric: {}'.format(args['metric']))
 
@@ -77,12 +78,13 @@ def main(save_path, args, hyperparams):
         val_metric = val_metric['mean-roc_auc_score']
       if args['metric'] == 'rmse':
         val_metric = val_metric['mean-rms_score']
+      if args['metric'] == 'r2':
+        val_metric = val_metric['mean-pearson_r2_score']
 
       # Early stop
       to_stop = stopper(model, val_metric)
       if to_stop:
         break
-
 
     stopper.load_keras_model(model)
     val_metric = model.evaluate(val_set, [metric], transformers)
@@ -94,6 +96,9 @@ def main(save_path, args, hyperparams):
     elif args['metric'] == 'rmse':
       val_metric = val_metric['mean-rms_score']
       test_metric = test_metric['mean-rms_score']
+    elif args['metric'] == 'r2':
+      val_metric = val_metric['mean-pearson_r2_score']
+      test_metric = test_metric['mean-pearson_r2_score']
 
     all_run_val_metrics.append(val_metric)
     all_run_test_metrics.append(test_metric)
@@ -119,9 +124,7 @@ def init_hyper_search_space(args):
         'lr':
         hp.uniform('lr', low=1e-4, high=3e-1),
         'layer_sizes':
-        hp.choice(
-            'layer_sizes',
-            [[64, 64, 32], [32, 32, 16], [16, 16, 8]]),
+        hp.choice('layer_sizes', [[64, 64, 32], [32, 32, 16], [16, 16, 8]]),
         'dropout':
         hp.uniform('dropout', low=0., high=0.6),
     }
@@ -140,7 +143,7 @@ def bayesian_optimization(args):
     save_path = init_trial_path(args)
     val_metrics, test_metrics = main(save_path, configure, hyperparams)
 
-    if args['metric'] in ['roc_auc']:
+    if args['metric'] in ['roc_auc', 'r2']:
       # To maximize a non-negative value is equivalent to minimize its opposite number
       val_metric_to_minimize = -1 * np.mean(val_metrics)
     else:
@@ -169,7 +172,7 @@ def bayesian_optimization(args):
 if __name__ == '__main__':
   import argparse
 
-  from utils import decide_metric, mkdir_p
+  from utils import mkdir_p
 
   parser = argparse.ArgumentParser('Examples for MoleculeNet with ACNN')
   parser.add_argument(
@@ -223,10 +226,16 @@ if __name__ == '__main__':
       type=int,
       default=16,
       help='Number of trials for hyperparameter search (default: 16)')
+  parser.add_argument(
+      '-me',
+      '--metric',
+      type=str,
+      choices=['rmse', 'r2'],
+      default='rmse',
+      help=
+      'Validation metric to optimize. Options inclue 1) rmse and 2) r2 (default: rmse)'
+  )
   args = parser.parse_args().__dict__
-
-  # Decide the metric to use based on the dataset
-  args['metric'] = decide_metric(args['dataset'])
 
   mkdir_p(args['result_path'])
   if args['hyper_search']:
