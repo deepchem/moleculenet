@@ -34,9 +34,9 @@
 
 ### PDBbind (core)
 
-| Rank | Model         | Featurization  | Test RMSE     | Validation RMSE | Contact                           | References                                                                               | Date           |
+| Rank | Model         | Featurization  | Test RMSE (R^2)     | Validation RMSE (R^2) | Contact                           | References                                                                               | Date           |
 | ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| 1    | ACNN | AtomicConv | 1.8604 +- 0.0540 | 1.5885 +- 0.0865   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://arxiv.org/pdf/1703.10603.pdf), [Code](./examples) | March 24, 2021  |
+| 1    | ACNN | AtomicConv | 1.8604 +- 0.0540 (0.5405 +- 0.0124) | 1.5885 +- 0.0865 (0.6015 +- 0.0330)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://arxiv.org/pdf/1703.10603.pdf), [Code](./examples) | March 24, 2021  |
 
 ## Physiology
 
