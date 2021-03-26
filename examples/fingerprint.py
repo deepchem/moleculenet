@@ -28,9 +28,9 @@ def rf_model_builder(model_dir, hyperparams, mode):
 
 
 def load_model(args, tasks, hyperparams):
-  if args['dataset'] in ['BACE_classification', 'BBBP']:
+  if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     mode = 'classification'
-  elif args['dataset'] in ['BACE_regression']:
+  elif args['dataset'] in ['BACE_regression', 'Delaney', 'HOPV', 'Lipo']:
     mode = 'regression'
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
@@ -100,7 +100,7 @@ def init_hyper_search_space(args):
         'min_samples_split': hp.choice('min_samples_split', [2, 4, 8, 16, 32]),
         'bootstrap': hp.choice('bootstrap', [True, False]),
     }
-    if args['dataset'] in ['BACE_classification', 'BBBP']:
+    if args['dataset'] in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
       search_space['criterion'] = hp.choice('criterion', ["gini", "entropy"])
     else:
       search_space['criterion'] = hp.choice('criterion', ["mse", "mae"])
@@ -154,7 +154,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '-d',
       '--dataset',
-      choices=['BACE_classification', 'BACE_regression', 'BBBP'],
+      choices=['BACE_classification', 'BACE_regression', 'BBBP', 'ClinTox', 'Delaney', 'HOPV', 'SIDER', 'Lipo'],
       help='Dataset to use')
   parser.add_argument(
       '-m',

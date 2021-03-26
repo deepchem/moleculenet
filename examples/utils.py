@@ -4,9 +4,9 @@ import torch
 
 
 def decide_metric(dataset):
-  if dataset in ['BACE_classification', 'BBBP']:
+  if dataset in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
     return 'roc_auc'
-  elif dataset == 'BACE_regression':
+  elif dataset in ['BACE_regression', 'Delaney', 'HOPV', 'Lipo']:
     return 'rmse'
   else:
     return ValueError('Unexpected dataset: {}'.format(dataset))
@@ -74,6 +74,26 @@ def load_dataset(args):
   elif args['dataset'] == 'BACE_regression':
     from deepchem.molnet import load_bace_regression
     tasks, all_dataset, transformers = load_bace_regression(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'ClinTox':
+    from deepchem.molnet import load_clintox
+    tasks, all_dataset, transformers = load_clintox(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'Delaney':
+    from deepchem.molnet import load_delaney
+    tasks, all_dataset, transformers = load_delaney(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'HOPV':
+    from deepchem.molnet import load_hopv
+    tasks, all_dataset, transformers = load_hopv(
+      featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'SIDER':
+    from deepchem.molnet import load_sider
+    tasks, all_dataset, transformers = load_sider(
+        featurizer=featurizer, splitter=splitter, reload=False)
+  elif args['dataset'] == 'Lipo':
+    from deepchem.molnet import load_lipo
+    tasks, all_dataset, transformers = load_lipo(
         featurizer=featurizer, splitter=splitter, reload=False)
   else:
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
