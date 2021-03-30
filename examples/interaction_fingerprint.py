@@ -21,7 +21,7 @@ def rf_model_builder(model_dir, hyperparams, mode):
   return dc.models.SklearnModel(sklearn_model, model_dir)
 
 
-def load_model(n_features, args, tasks, hyperparams):
+def load_model(save_path, n_features, args, tasks, hyperparams):
   if args['dataset'] in ['PDBbind']:
     mode = 'regression'
   else:
@@ -43,7 +43,8 @@ def load_model(n_features, args, tasks, hyperparams):
         n_features=n_features,
         layer_sizes=hyperparams['layer_sizes'],
         dropouts=hyperparams['dropout'],
-        learning_rate=hyperparams['lr'])
+        learning_rate=hyperparams['lr'],
+        model_dir=save_path)
   else:
     raise ValueError('Unexpected model: {}'.format(args['model']))
 
@@ -71,13 +72,12 @@ def main(save_path, args, hyperparams):
 
   for _ in range(args['num_runs']):
     # Model
-    model = load_model(n_features, args, tasks, hyperparams)
+    model = load_model(save_path, n_features, args, tasks, hyperparams)
 
     if args['model'] == 'RF':
       model.fit(train_set)
     else:
       # Object for early stop tracking
-      save_path = '.'
       stopper = EarlyStopper(save_path, args['metric'], args['patience'])
 
       # 50 for maximum number of epochs
