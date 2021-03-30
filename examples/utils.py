@@ -1,7 +1,6 @@
 import errno
 import os
 import torch
-import tensorflow as tf
 
 
 def decide_metric(dataset):
@@ -71,6 +70,17 @@ def load_dataset(args):
         complex_num_atoms=1100,
         max_num_neighbors=12,
         neighbor_cutoff=4)
+  elif args['featurizer'] == 'flat':
+    from deepchem.feat import RdkitGridFeaturizer as RGF
+    featurizer = RGF(feature_types=['flat_combined'], flatten=True)
+  elif args['featurizer'] == 'voxel':
+    from deepchem.feat import RdkitGridFeaturizer as RGF
+    featurizer = RGF(feature_types=['voxel_combined'], flatten=True)
+  elif args['featurizer'] == 'all':
+    from deepchem.feat import RdkitGridFeaturizer as RGF
+    featurizer = RGF(feature_types=['all_combined'], flatten=True)
+  else:
+    raise ValueError('Unexpected featurizer: {}'.format(args['featurizer']))
 
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
