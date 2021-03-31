@@ -151,9 +151,9 @@ def init_hyper_search_space(args):
         'layer_sizes':
         hp.choice('layer_sizes', [[3000, 1500], [2000, 1000], [1000, 500]]),
         'dropout':
-        hp.uniform('dropout', low=0., high=0.6),
+        hp.uniform('dropout', low=0., high=0.5),
         'lr':
-        hp.uniform('lr', low=1e-4, high=3e-1),
+        hp.uniform('lr', low=1e-4, high=3e-2),
     }
   else:
     raise ValueError('Unexpected model: {}'.format(args['model']))
