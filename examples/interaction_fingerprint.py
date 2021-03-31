@@ -217,8 +217,9 @@ if __name__ == '__main__':
   parser.add_argument(
       '-f',
       '--featurizer',
-      choices=['flat', 'voxel', 'all'],
-      default='flat',
+      choices=['flat_combined', 'voxel_combined', 'all_combined',
+      'ecfp_ligand', 'ecfp_hashed', 'ecfp', 'splif'],
+      default='flat_combined',
       help=
       'Options include 1) flat (ecfp, splif, hbond), 2) voxel (ecfp, splif, salt bridge, charge, hbond, pi stack, cation pi), 3) all (default: flat)'
   )

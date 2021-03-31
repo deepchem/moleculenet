@@ -70,17 +70,10 @@ def load_dataset(args):
         complex_num_atoms=1100,
         max_num_neighbors=12,
         neighbor_cutoff=4)
-  elif args['featurizer'] == 'flat':
+
+  if args['featurizer'] in ['flat_combined', 'voxel_combined', 'all_combined', 'ecfp_ligand', 'ecfp_hashed', 'ecfp', 'splif']:
     from deepchem.feat import RdkitGridFeaturizer as RGF
-    featurizer = RGF(feature_types=['flat_combined'], flatten=True)
-  elif args['featurizer'] == 'voxel':
-    from deepchem.feat import RdkitGridFeaturizer as RGF
-    featurizer = RGF(feature_types=['voxel_combined'], flatten=True)
-  elif args['featurizer'] == 'all':
-    from deepchem.feat import RdkitGridFeaturizer as RGF
-    featurizer = RGF(feature_types=['all_combined'], flatten=True)
-  else:
-    raise ValueError('Unexpected featurizer: {}'.format(args['featurizer']))
+    featurizer = RGF(feature_types=[args['featurizer']], box_width=6.0, flatten=True, sanitize=True)
 
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
