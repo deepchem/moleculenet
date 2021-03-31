@@ -1,7 +1,5 @@
 import errno
 import os
-import torch
-
 
 def decide_metric(dataset):
   if dataset in ['BACE_classification', 'BBBP', 'ClinTox', 'SIDER']:
@@ -145,6 +143,7 @@ class EarlyStopper():
       self.best_score = current_score
       self.patience_count = 0
       if type(model).__bases__[0] == TorchModel:
+        import torch
         torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
       else:  # KerasModel
         model.model.save(self.save_path + '/early_stop')
@@ -152,6 +151,7 @@ class EarlyStopper():
       self.best_score = current_score
       self.patience_count = 0
       if type(model).__bases__[0] == TorchModel:
+        import torch
         torch.save(model.model.state_dict(), self.save_path + '/early_stop.pt')
       else:  # KerasModel
         model.model.save(self.save_path + '/early_stop')
@@ -161,6 +161,7 @@ class EarlyStopper():
     return self.patience_count == self.max_patience
 
   def load_state_dict(self, model):
+    import torch
     model.model.load_state_dict(torch.load(self.save_path + '/early_stop.pt'))
 
   def load_keras_model(self, model):
