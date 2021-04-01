@@ -77,6 +77,26 @@ The feasible arguments include:
     - The number of trials for hyperparameter search. This comes into effect only when the user specifies 
       `-hs` as described above.
 
+## Interaction Fingerprint
+
+To train a random forest or fully-connected network using [interaction fingerprints](https://github.com/deepchem/deepchem/blob/master/deepchem/feat/complex_featurizers/rdkit_grid_featurizer.py#L20)
+
+```bash
+python interaction_fingerprint.py
+```
+
+The feasible arguments include:
+- **Dataset**: `-d dataset`
+    - Specifies the dataset to use, which can be one of the following:
+        - `PDBbind`
+- **Hyperparameter Search (optional)**: `-hs`
+    - Perform a hyperparameter search using Bayesian optimization. It determines the best 
+      hyperparameters based on the validation metric averaged across 3 runs.
+    - If not specified, the script uses default hyperparameters.
+- **Number of Hyperparameter Search Trials (optional)**: `-nt num_trials` [default=16]
+    - The number of trials for hyperparameter search. This comes into effect only when the user specifies 
+      `-hs` as described above.
+
 ## Results
 
 The scripts will save the training results in `results/`, including:
