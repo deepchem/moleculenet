@@ -244,8 +244,8 @@ if __name__ == '__main__':
     val_metrics, test_metrics = bayesian_optimization(args)
   else:
     print('Use the manually specified hyperparameters')
-    with open('configures/{}_{}/{}.json'.format(
-        args['model'], args['featurizer'], args['dataset'])) as f:
+    with open('configures/{}_{}/{}_{}.json'.format(
+        args['model'], args['featurizer'], args['dataset'], args['metric'])) as f:
       default_hyperparams = json.load(f)
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)

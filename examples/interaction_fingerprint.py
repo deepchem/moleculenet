@@ -11,16 +11,6 @@ from sklearn.ensemble import RandomForestRegressor
 from utils import init_trial_path, load_dataset, EarlyStopper
 
 
-def rf_model_builder(model_dir, hyperparams, mode):
-  if mode == 'regression':
-    sklearn_model = RandomForestRegressor(
-        n_estimators=hyperparams['n_estimators'],
-        criterion=hyperparams['criterion'],
-        min_samples_split=hyperparams['min_samples_split'],
-        bootstrap=hyperparams['bootstrap'])
-  return dc.models.SklearnModel(sklearn_model, model_dir)
-
-
 def load_model(save_path, n_features, args, tasks, hyperparams):
   if args['dataset'] in ['PDBbind']:
     mode = 'regression'
@@ -28,8 +18,6 @@ def load_model(save_path, n_features, args, tasks, hyperparams):
     raise ValueError('Unexpected dataset: {}'.format(args['dataset']))
 
   if args['model'] == 'RF':
-    # model = dc.models.SingletaskToMultitask(
-    #     tasks, partial(rf_model_builder, hyperparams=hyperparams, mode=mode))
     sklearn_model = RandomForestRegressor(
         n_estimators=hyperparams['n_estimators'],
         criterion=hyperparams['criterion'],
@@ -37,7 +25,7 @@ def load_model(save_path, n_features, args, tasks, hyperparams):
         bootstrap=hyperparams['bootstrap'])
 
     model = dc.models.SklearnModel(sklearn_model)
-  elif args['model'] == 'MTR':
+  elif args['model'] == 'MLP':
     model = dc.models.MultitaskRegressor(
         n_tasks=1,
         n_features=n_features,
@@ -146,7 +134,7 @@ def init_hyper_search_space(args):
       search_space['criterion'] = hp.choice('criterion', ["gini", "entropy"])
     else:
       search_space['criterion'] = hp.choice('criterion', ["mse", "mae"])
-  elif args['model'] == 'MTR':
+  elif args['model'] == 'MLP':
     search_space = {
         'layer_sizes':
         hp.choice('layer_sizes', [[3000, 1500], [2000, 1000], [1000, 500]]),
@@ -209,10 +197,10 @@ if __name__ == '__main__':
   parser.add_argument(
       '-m',
       '--model',
-      choices=['RF', 'MTR'],
+      choices=['RF', 'MLP'],
       default='RF',
       help=
-      'Options include 1) random forest (RF), 2) multitask regressor (MTR) (default: RF)'
+      'Options include 1) random forest (RF), 2) multilayer perceptron (MLP) (default: RF)'
   )
   parser.add_argument(
       '-f',
@@ -221,7 +209,7 @@ if __name__ == '__main__':
       'ecfp_ligand', 'ecfp_hashed', 'ecfp', 'splif'],
       default='flat_combined',
       help=
-      'Options include 1) flat (ecfp, splif, hbond), 2) voxel (ecfp, splif, salt bridge, charge, hbond, pi stack, cation pi), 3) all (default: flat)'
+      'Options include flat_combined, voxel_combined, all_combined, ecfp_ligand, ecfp_hashed, ecfp, splif (default: flat_combined)'
   )
   parser.add_argument(
       '-p',
@@ -272,8 +260,8 @@ if __name__ == '__main__':
     val_metrics, test_metrics = bayesian_optimization(args)
   else:
     print('Use the manually specified hyperparameters')
-    with open('configures/{}_{}/{}.json'.format(
-        args['model'], args['featurizer'], args['dataset'])) as f:
+    with open('configures/{}_{}/{}_{}.json'.format(
+        args['model'], args['featurizer'], args['dataset'], args['metric'])) as f:
       default_hyperparams = json.load(f)
     val_metrics, test_metrics = main(args['result_path'], args,
                                      default_hyperparams)

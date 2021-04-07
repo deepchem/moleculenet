@@ -38,7 +38,7 @@
 | ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
 | 1    | ACNN | AtomicConv | 1.8604 +- 0.0540 (0.5405 +- 0.0124) | 1.5885 +- 0.0865 (0.6015 +- 0.0330)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://arxiv.org/pdf/1703.10603.pdf), [Code](./examples) | March 24, 2021  |
 | 2    | RF | Voxelized ECFP | 2.2488 +- 0.0615 (0.0773 +- 0.0242) | 2.1411 +- 0.0081 (0.0176 +- 0.0084)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | March 31, 2021  |
-| 3    | MTR | Ligand ECFP | 2.2596 +- 0.5495 (0.0440 +- 0.0042) | 2.5236 +- 0.2842 (0.1947 +- 0.0004)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | March 31, 2021  |
+| 3    | MLP | Ligand ECFP | 2.2596 +- 0.5495 (0.0440 +- 0.0042) | 2.5236 +- 0.2842 (0.1947 +- 0.0004)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | March 31, 2021  |
 
 ## Physiology
 

@@ -4,6 +4,7 @@ The repository includes the following example scripts:
 - fingerprint
 - gnn
 - acnn
+- interaction_fingerprint
 
 ## Fingerprint
 
@@ -76,6 +77,8 @@ The feasible arguments include:
 - **Number of Hyperparameter Search Trials (optional)**: `-nt num_trials` [default=16]
     - The number of trials for hyperparameter search. This comes into effect only when the user specifies 
       `-hs` as described above.
+- **Metric (optional)**: `-me` [default=rmse]
+    - Validation metric to optimize. Options inclue 1) rmse and 2) r2
 
 ## Interaction Fingerprint
 
@@ -89,6 +92,12 @@ The feasible arguments include:
 - **Dataset**: `-d dataset`
     - Specifies the dataset to use, which can be one of the following:
         - `PDBbind`
+- **Model (optional)**: `-m` [default=RF]
+    - Options include 1) random forest (RF), 2) multilayer perceptron (MLP)
+- **Featurizer (optional)**: `-f` [default=flat_combined]
+    - Options include flat_combined, voxel_combined, all_combined, ecfp_ligand, ecfp_hashed, ecfp, splif
+- **Patience (optional)**: `-pa` [default=10]
+    - Number of epochs to wait before early stop if validation performance stops getting improved
 - **Hyperparameter Search (optional)**: `-hs`
     - Perform a hyperparameter search using Bayesian optimization. It determines the best 
       hyperparameters based on the validation metric averaged across 3 runs.
@@ -96,6 +105,8 @@ The feasible arguments include:
 - **Number of Hyperparameter Search Trials (optional)**: `-nt num_trials` [default=16]
     - The number of trials for hyperparameter search. This comes into effect only when the user specifies 
       `-hs` as described above.
+- **Metric (optional)**: `-me` [default=rmse]
+    - Validation metric to optimize. Options inclue 1) rmse and 2) r2
 
 ## Results
 
