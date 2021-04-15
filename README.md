@@ -37,8 +37,10 @@
 | Rank | Model         | Featurization  | Test RMSE (R^2)     | Validation RMSE (R^2) | Contact                           | References                                                                               | Date           |
 | ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
 | 1    | ACNN | AtomicConv | 1.8604 +- 0.0540 (0.5405 +- 0.0124) | 1.5885 +- 0.0865 (0.6015 +- 0.0330)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://arxiv.org/pdf/1703.10603.pdf), [Code](./examples) | March 24, 2021  |
-| 2    | RF | Voxelized ECFP | 2.2488 +- 0.0615 (0.0773 +- 0.0242) | 2.1411 +- 0.0081 (0.0176 +- 0.0084)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | March 31, 2021  |
-| 3    | MLP | Ligand ECFP | 2.2596 +- 0.5495 (0.0440 +- 0.0042) | 2.5236 +- 0.2842 (0.1947 +- 0.0004)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | March 31, 2021  |
+| 2    | RF | Ligand ECFP | 1.9548 +- 0.0372 (0.1763 +- 0.0802) | 2.0035 +- 0.0441 (0.2662 +- 0.0477)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | April 15, 2021  |
+| 3    | MLP | Ligand ECFP | 1.9403 +- 0.0105 (0.0881 +- 0.0606) | 1.6162 +- 0.0115 (0.1371 +- 0.1173)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | April 15, 2021  | 
+| 4    | MLP | SPLIF | 2.6994 +- 0.0879 (0.0293 +- 0.0274) | 2.1859 +- 0.1000 (0.0866 +- 0.0008)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/abs/10.1021/ci500319f), [Code](./examples) | April 15, 2021  | 
+| 5    | RF | Voxelized ECFP | 2.5717 +- 0.0302 (0.0117 +- 0.0027) | 2.3351 +- 0.0241 (0.0405 +- 0.0099)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://pubs.acs.org/doi/pdf/10.1021/ci100050t), [Code](./examples) | April 15, 2021  | 
 
 ## Physiology
 
