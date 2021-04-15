@@ -74,7 +74,7 @@ def load_dataset(args):
   if args['featurizer'] in ['flat_combined', 'voxel_combined', 'all_combined', 'ecfp_ligand', 'ecfp_hashed', 'ecfp', 'splif']:
     from deepchem.feat import RdkitGridFeaturizer as RGF
     featurizer = RGF(feature_types=[args['featurizer']], 
-      ecfp_power=9, splif_power=9, box_width=6.0, flatten=True, sanitize=True)
+      ecfp_power=9, splif_power=5, box_width=6.0, flatten=True, sanitize=True)
 
   if args['dataset'] == 'BACE_classification':
     from deepchem.molnet import load_bace_classification
