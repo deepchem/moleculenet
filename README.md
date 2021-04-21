@@ -32,6 +32,12 @@
 | 1    | Random Forest | 1024-bit ECFP4 | 1.3178 +- 0.0081 | 0.6716 +- 0.0059 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf), [Code](./examples) | Dec 26th, 2020 |
 | 2    | GCN           | GraphConv      | 1.6450 +- 0.1325 | 0.5244 +- 0.0200 | [Mufei Li](mufeili1996@gmail.com) | [Paper](https://arxiv.org/abs/1609.02907), [Code](./examples)                            | Dec 26th, 2020 |
 
+### PDBbind (core)
+
+| Rank | Model         | Featurization  | Test RMSE (R^2)     | Validation RMSE (R^2) | Contact                           | References                                                                               | Date           |
+| ---- | ------------- | -------------- | ---------------- | ------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
+| 1    | ACNN | AtomicConv | 1.8604 +- 0.0540 (0.5405 +- 0.0124) | 1.5885 +- 0.0865 (0.6015 +- 0.0330)   | [Nathan Frey](n.frey@seas.upenn.edu) | [Paper](https://arxiv.org/pdf/1703.10603.pdf), [Code](./examples) | March 24, 2021  |
+
 ## Physiology
 
 ### BBBP
